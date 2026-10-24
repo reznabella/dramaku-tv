@@ -1,0 +1,107 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dramaku TV - Drama Jepang Subtitle Indonesia</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: #101010;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+header {
+  background: #1b1b1b;
+  padding: 22px 16px;
+  text-align: center;
+  border-bottom: 2px solid #e63946;
+}
+header h1 { margin: 0 0 8px; color: #ff4757; }
+header p { margin: 0; color: #ccc; }
+main { padding: 18px; max-width: 1200px; margin: auto; }
+input {
+  width: 100%;
+  padding: 13px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  background: #222;
+  color: white;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 16px;
+}
+.film {
+  background: #202020;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.film img {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  display: block;
+  background: #333;
+}
+.film h3 { font-size: 14px; padding: 0 10px; }
+.film a {
+  display: block;
+  margin: 10px;
+  padding: 10px;
+  text-align: center;
+  text-decoration: none;
+  background: #e63946;
+  color: white;
+  border-radius: 5px;
+}
+#kosong { color: #bbb; }
+footer { text-align: center; padding: 25px; color: #aaa; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Dramaku TV</h1>
+  <p>Drama Jepang Subtitle Indonesia</p>
+</header>
+<main>
+  <input id="cari" type="search" placeholder="Cari judul drama..." aria-label="Cari judul drama">
+  <div class="grid" id="daftar"></div>
+  <p id="kosong" hidden>Drama tidak ditemukan.</p>
+</main>
+<footer>© Dramaku TV</footer>
+<script>
+const film = [
+  {
+    judul: "Seorang Guru Perempuan yang Menghadapi Murid Nakal",
+    poster: "poster1.jpg",
+    link: "https://1024terabox.com/s/1FPYrN4UNJehdBbMB6mwcyg"
+  }
+];
+
+const daftar = document.getElementById("daftar");
+const cari = document.getElementById("cari");
+const kosong = document.getElementById("kosong");
+
+function tampilkan() {
+  const kata = cari.value.toLowerCase();
+  const hasil = film.filter(f => f.judul.toLowerCase().includes(kata));
+  daftar.innerHTML = hasil.map(f => `
+    <article class="film">
+      <img src="${f.poster || 'https://placehold.co/300x450/252525/ffffff?text=Poster'}" alt="Poster ${f.judul}">
+      <h3>${f.judul}</h3>
+      <a href="${f.link || '#'}" target="_blank" rel="noopener">Tonton / Info</a>
+    </article>
+  `).join("");
+  kosong.hidden = hasil.length !== 0;
+}
+cari.addEventListener("input", tampilkan);
+tampilkan();
+</script>
+</body>
+</html>
