@@ -318,6 +318,22 @@ document.getElementById("tambahDrama").onclick = async () => {
   ambilDramaSupabase();
   tampilkanDaftarDramaAdmin();
 };
+  document.getElementById("logoutAdmin").onclick = async () => {
+  const { error } = await klienAdmin.auth.signOut();
+
+  if (error) {
+    alert("Gagal logout. Silakan coba lagi.");
+    return;
+  }
+
+  document.getElementById("panelAdmin").hidden = true;
+  document.getElementById("loginAdmin").hidden = true;
+  document.getElementById("pesanAdmin").textContent = "";
+  document.getElementById("emailAdmin").value = "";
+  document.getElementById("passwordAdmin").value = "";
+
+  alert("Berhasil logout.");
+};
   
 async function tampilkanDaftarDramaAdmin() {
   const daftar = document.getElementById("daftarDramaAdmin");
