@@ -209,6 +209,40 @@ pesan.textContent = "Login admin berhasil!";
 document.getElementById("loginAdmin").hidden = true;
 document.getElementById("panelAdmin").hidden = false;
 };
+  
+document.getElementById("tambahDrama").onclick = async () => {
+  const pesan = document.getElementById("pesanPanel");
+  pesan.textContent = "Menyimpan drama...";
+
+  const judul = document.getElementById("judulBaru").value.trim();
+
+  if (!judul) {
+    pesan.textContent = "Judul drama wajib diisi.";
+    return;
+  }
+
+  const { error } = await klienAdmin.from("drama").insert({
+    judul: judul,
+    poster_url: document.getElementById("posterBaru").value.trim() || null,
+    kategori: document.getElementById("kategoriBaru").value.trim() || null,
+    link_tonton: document.getElementById("linkBaru").value.trim() || null
+  });
+
+  if (error) {
+    pesan.textContent = "Gagal menyimpan drama. Periksa izin database.";
+    console.error(error);
+    return;
+  }
+
+  pesan.textContent = "Drama berhasil ditambahkan!";
+
+  document.getElementById("judulBaru").value = "";
+  document.getElementById("posterBaru").value = "";
+  document.getElementById("kategoriBaru").value = "";
+  document.getElementById("linkBaru").value = "";
+
+  ambilDramaSupabase();
+};
 
 </script>
 </body>
