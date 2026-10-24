@@ -268,12 +268,62 @@ async function tampilkanDaftarDramaAdmin() {
   data.forEach((drama) => {
     const baris = document.createElement("div");
     const judul = document.createElement("span");
+    const tombolEdit = document.createElement("button");
     const tombol = document.createElement("button");
 
     judul.textContent = drama.judul + " ";
-    tombol.textContent = "Hapus";
-    tombol.type = "button";
 
+tombolEdit.textContent = "Edit";
+tombolEdit.type = "button";
+
+tombolEdit.onclick = async () => {
+  const { data, error } = await klienAdmin
+    .from("drama")
+    .select("id, judul, poster_url, kategori, link_tonton")
+    .eq("id", drama.id)
+    .single();
+
+  if (error) {
+    alert("Gagal mengambil data drama.");
+    return;
+  }
+
+  const judulBaru = prompt("Judul drama:", data.judul);
+  if (judulBaru === null || !judulBaru.trim()) return;
+
+  const posterBaru = prompt("URL poster:", data.poster_url || "");
+  if (posterBaru === null) return;
+
+  const kategoriBaru = prompt("Kategori:", data.kategori || "");
+  if (kategoriBaru === null) return;
+
+  const linkBaru = prompt("Link tontonan:", data.link_tonton || "");
+  if (linkBaru === null) return;
+
+  const { error: errorEdit } = await klienAdmin
+    .from("drama")
+    .update({
+      judul: judulBaru.trim(),
+      poster_url: posterBaru.trim() || null,
+      kategori: kategoriBaru.trim() || null,
+      link_tonton: linkBaru.trim() || null
+    })
+    .eq("id", drama.id);
+
+  if (errorEdit) {
+    alert("Gagal mengedit drama.");
+    console.error(errorEdit);
+    return;
+  }
+
+  alert("Drama berhasil diperbarui.");
+  tampilkanDaftarDramaAdmin();
+  ambilDramaSupabase();
+};
+
+tombol.textContent = "Hapus";
+tombol.type = "button";
+    
     tombol.onclick = async () => {
       if (!confirm('Yakin ingin menghapus "' + drama.judul + '"?')) return;
 
@@ -294,6 +344,7 @@ async function tampilkanDaftarDramaAdmin() {
     };
 
     baris.appendChild(judul);
+    baris.appendChild(tombolEdit);
     baris.appendChild(tombol);
     daftar.appendChild(baris);
   });
