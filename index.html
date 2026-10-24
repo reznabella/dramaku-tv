@@ -330,11 +330,13 @@ document.getElementById("tambahDrama").onclick = async () => {
 
   document.getElementById("panelAdmin").hidden = true;
   document.getElementById("loginAdmin").hidden = true;
+
   document.getElementById("pesanAdmin").textContent = "";
   document.getElementById("emailAdmin").value = "";
   document.getElementById("passwordAdmin").value = "";
 
-  alert("Berhasil logout.");
+  window.scrollTo(0, 0);
+  alert("Berhasil logout. Kamu kembali ke halaman utama.");
 };
   
 async function tampilkanDaftarDramaAdmin() {
