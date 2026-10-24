@@ -63,6 +63,39 @@ input {
 }
 #kosong { color: #bbb; }
 footer { text-align: center; padding: 25px; color: #aaa; }
+  .item-drama-admin {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin: 12px 0;
+  padding: 10px;
+  background: #202020;
+  border-radius: 10px;
+}
+
+.poster-admin {
+  width: 90px;
+  height: 125px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.info-drama-admin {
+  flex: 1;
+  min-width: 0;
+}
+
+.aksi-drama-admin {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.aksi-drama-admin button {
+  padding: 7px 10px;
+  cursor: pointer;
+}
 </style>
 </head>
 <body>
@@ -254,7 +287,7 @@ async function tampilkanDaftarDramaAdmin() {
 
   const { data, error } = await klienAdmin
     .from("drama")
-    .select("id, judul")
+   .select("id, judul, poster_url, kategori, link_tonton")
     .order("id", { ascending: true });
 
   if (error) {
@@ -267,6 +300,16 @@ async function tampilkanDaftarDramaAdmin() {
 
   data.forEach((drama) => {
     const baris = document.createElement("div");
+    baris.className = "item-drama-admin";
+
+    const poster = document.createElement("img");
+    poster.className = "poster-admin";
+    poster.src = drama.poster_url || "";
+    poster.alt = drama.judul;
+
+    const info = document.createElement("div");
+    info.className = "info-drama-admin";
+
     const judul = document.createElement("span");
     const tombolEdit = document.createElement("button");
     const tombol = document.createElement("button");
@@ -343,10 +386,17 @@ tombol.type = "button";
       ambilDramaSupabase();
     };
 
-    baris.appendChild(judul);
-    baris.appendChild(tombolEdit);
-    baris.appendChild(tombol);
-    daftar.appendChild(baris);
+   info.appendChild(judul);
+
+      const aksi = document.createElement("div");
+      aksi.className = "aksi-drama-admin";
+      aksi.appendChild(tombolEdit);
+      aksi.appendChild(tombol);
+
+      info.appendChild(aksi);
+      baris.appendChild(poster);
+      baris.appendChild(info);
+      daftar.appendChild(baris);
   });
 }
 
