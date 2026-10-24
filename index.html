@@ -149,6 +149,46 @@ tampilkan();
 }
 
 ambilDramaSupabase();
+  
+const klienAdmin = window.supabase.createClient(
+  "https://wizpznrhbmbfpajpaexf.supabase.co",
+  "https://wizpznrhbmbfpajpaexf.supabase.co"
+);
+
+document.getElementById("tombolAdmin").onclick = () => {
+  const form = document.getElementById("loginAdmin");
+  form.hidden = !form.hidden;
+};
+
+document.getElementById("masukAdmin").onclick = async () => {
+  const pesan = document.getElementById("pesanAdmin");
+  pesan.textContent = "Memeriksa akun...";
+
+  const { data, error } = await klienAdmin.auth.signInWithPassword({
+    email: document.getElementById("emailAdmin").value,
+    password: document.getElementById("passwordAdmin").value
+  });
+
+  if (error) {
+    pesan.textContent = "Login gagal. Periksa email dan password.";
+    return;
+  }
+
+  const { data: admin, error: errorAdmin } = await klienAdmin
+    .from("admin_users")
+    .select("user_id")
+    .eq("user_id", data.user.id)
+    .maybeSingle();
+
+  if (errorAdmin || !admin) {
+    await klienAdmin.auth.signOut();
+    pesan.textContent = "Akun ini tidak terdaftar sebagai admin.";
+    return;
+  }
+
+  pesan.textContent = "Login admin berhasil!";
+};
+
 </script>
 </body>
 </html>
