@@ -98,6 +98,9 @@ footer { text-align: center; padding: 25px; color: #aaa; }
 
   <button id="tambahDrama" type="button">Tambah Drama</button>
   <p id="pesanPanel"></p>
+    <hr>
+<h3>Kelola Drama</h3>
+<div id="daftarDramaAdmin"></div>
 </section>
   <div class="grid" id="daftar"></div>
   <p id="kosong" hidden>Drama tidak ditemukan.</p>
@@ -208,6 +211,7 @@ document.getElementById("masukAdmin").onclick = async () => {
 pesan.textContent = "Login admin berhasil!";
 document.getElementById("loginAdmin").hidden = true;
 document.getElementById("panelAdmin").hidden = false;
+tampilkanDaftarDramaAdmin();
 };
   
 document.getElementById("tambahDrama").onclick = async () => {
@@ -243,6 +247,57 @@ document.getElementById("tambahDrama").onclick = async () => {
 
   ambilDramaSupabase();
 };
+  
+async function tampilkanDaftarDramaAdmin() {
+  const daftar = document.getElementById("daftarDramaAdmin");
+  daftar.textContent = "Memuat daftar drama...";
+
+  const { data, error } = await klienAdmin
+    .from("drama")
+    .select("id, judul")
+    .order("id", { ascending: true });
+
+  if (error) {
+    daftar.textContent = "Gagal memuat daftar drama.";
+    console.error(error);
+    return;
+  }
+
+  daftar.innerHTML = "";
+
+  data.forEach((drama) => {
+    const baris = document.createElement("div");
+    const judul = document.createElement("span");
+    const tombol = document.createElement("button");
+
+    judul.textContent = drama.judul + " ";
+    tombol.textContent = "Hapus";
+    tombol.type = "button";
+
+    tombol.onclick = async () => {
+      if (!confirm('Yakin ingin menghapus "' + drama.judul + '"?')) return;
+
+      const { error: errorHapus } = await klienAdmin
+        .from("drama")
+        .delete()
+        .eq("id", drama.id);
+
+      if (errorHapus) {
+        alert("Gagal menghapus drama. Periksa izin database.");
+        console.error(errorHapus);
+        return;
+      }
+
+      alert("Drama berhasil dihapus.");
+      tampilkanDaftarDramaAdmin();
+      ambilDramaSupabase();
+    };
+
+    baris.appendChild(judul);
+    baris.appendChild(tombol);
+    daftar.appendChild(baris);
+  });
+}
 
 </script>
 </body>
