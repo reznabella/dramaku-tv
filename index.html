@@ -334,7 +334,8 @@ document.getElementById("tambahDrama").onclick = async () => {
   document.getElementById("pesanAdmin").textContent = "";
   document.getElementById("emailAdmin").value = "";
   document.getElementById("passwordAdmin").value = "";
-
+    
+  await ambilDramaSupabase();
   window.scrollTo(0, 0);
   alert("Berhasil logout. Kamu kembali ke halaman utama.");
 };
