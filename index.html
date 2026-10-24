@@ -120,8 +120,13 @@ footer { text-align: center; padding: 25px; color: #aaa; }
   <label>Judul drama</label>
   <input id="judulBaru" type="text" placeholder="Masukkan judul drama">
 
+
   <label>URL poster</label>
-  <input id="posterBaru" type="url" placeholder="Tempel URL poster">
+  <input id="posterBaru" type="url" placeholder="URL poster (opsional)">
+
+  <label>Atau unggah poster dari komputer</label>
+  <input id="filePoster" type="file" accept="image/*">
+
 
   <label>Kategori</label>
   <input id="kategoriBaru" type="text" placeholder="Drama Jepang">
@@ -246,27 +251,57 @@ document.getElementById("loginAdmin").hidden = true;
 document.getElementById("panelAdmin").hidden = false;
 tampilkanDaftarDramaAdmin();
 };
-  
+
 document.getElementById("tambahDrama").onclick = async () => {
   const pesan = document.getElementById("pesanPanel");
   pesan.textContent = "Menyimpan drama...";
 
   const judul = document.getElementById("judulBaru").value.trim();
+  const file = document.getElementById("filePoster").files[0];
+  let posterUrl = document.getElementById("posterBaru").value.trim();
 
   if (!judul) {
     pesan.textContent = "Judul drama wajib diisi.";
     return;
   }
 
+  if (file) {
+    if (!file.type.startsWith("image/")) {
+      pesan.textContent = "Pilih file gambar.";
+      return;
+    }
+
+    const namaFile = Date.now() + "-" +
+      file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+
+    pesan.textContent = "Mengunggah poster...";
+
+    const { error: errorUpload } = await klienAdmin.storage
+      .from("poster-drama")
+      .upload(namaFile, file);
+
+    if (errorUpload) {
+      pesan.textContent = "Gagal mengunggah poster.";
+      console.error(errorUpload);
+      return;
+    }
+
+    const { data: urlPoster } = klienAdmin.storage
+      .from("poster-drama")
+      .getPublicUrl(namaFile);
+
+    posterUrl = urlPoster.publicUrl;
+  }
+
   const { error } = await klienAdmin.from("drama").insert({
     judul: judul,
-    poster_url: document.getElementById("posterBaru").value.trim() || null,
+    poster_url: posterUrl || null,
     kategori: document.getElementById("kategoriBaru").value.trim() || null,
     link_tonton: document.getElementById("linkBaru").value.trim() || null
   });
 
   if (error) {
-    pesan.textContent = "Gagal menyimpan drama. Periksa izin database.";
+    pesan.textContent = "Gagal menyimpan drama.";
     console.error(error);
     return;
   }
@@ -275,10 +310,12 @@ document.getElementById("tambahDrama").onclick = async () => {
 
   document.getElementById("judulBaru").value = "";
   document.getElementById("posterBaru").value = "";
+  document.getElementById("filePoster").value = "";
   document.getElementById("kategoriBaru").value = "";
   document.getElementById("linkBaru").value = "";
 
   ambilDramaSupabase();
+  tampilkanDaftarDramaAdmin();
 };
   
 async function tampilkanDaftarDramaAdmin() {
