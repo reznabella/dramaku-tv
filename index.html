@@ -80,6 +80,25 @@ footer { text-align: center; padding: 25px; color: #aaa; }
   <button id="masukAdmin" type="button">Masuk</button>
   <p id="pesanAdmin"></p>
 </section>
+  <section id="panelAdmin" hidden>
+  <h2>Panel Admin Dramaku TV</h2>
+  <p>Login admin berhasil.</p>
+
+  <label>Judul drama</label>
+  <input id="judulBaru" type="text" placeholder="Masukkan judul drama">
+
+  <label>URL poster</label>
+  <input id="posterBaru" type="url" placeholder="Tempel URL poster">
+
+  <label>Kategori</label>
+  <input id="kategoriBaru" type="text" placeholder="Drama Jepang">
+
+  <label>Link tontonan</label>
+  <input id="linkBaru" type="url" placeholder="Tempel link tontonan">
+
+  <button id="tambahDrama" type="button">Tambah Drama</button>
+  <p id="pesanPanel"></p>
+</section>
   <div class="grid" id="daftar"></div>
   <p id="kosong" hidden>Drama tidak ditemukan.</p>
 </main>
@@ -186,7 +205,9 @@ document.getElementById("masukAdmin").onclick = async () => {
     return;
   }
 
-  pesan.textContent = "Login admin berhasil!";
+pesan.textContent = "Login admin berhasil!";
+document.getElementById("loginAdmin").hidden = true;
+document.getElementById("panelAdmin").hidden = false;
 };
 
 </script>
