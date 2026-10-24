@@ -122,7 +122,18 @@ tampilkan();
     }
 
     const dataDrama = await respons.json();
-    console.log("Data drama Supabase:", dataDrama);
+
+film.length = 0;
+
+dataDrama.forEach(d => {
+  film.push({
+    judul: d.judul,
+    poster: d.poster_url,
+    link: d.link_tonton
+  });
+});
+
+tampilkan();
   } catch (error) {
     console.error(error);
   }
