@@ -102,6 +102,33 @@ function tampilkan() {
 }
 cari.addEventListener("input", tampilkan);
 tampilkan();
+  async function ambilDramaSupabase() {
+  const SUPABASE_URL = "https://wizpznrhbmbfpajpaexf.supabase.co/rest/v1/";
+  const SUPABASE_KEY = "sb_publishable_u2MHJvGkthIN0fULeAlDzQ_Zgnsg9Ap";
+
+  try {
+    const respons = await fetch(
+      `${SUPABASE_URL}/rest/v1/drama?select=*`,
+      {
+        headers: {
+          apikey: SUPABASE_KEY,
+          Authorization: `Bearer ${SUPABASE_KEY}`
+        }
+      }
+    );
+
+    if (!respons.ok) {
+      throw new Error("Gagal mengambil data drama");
+    }
+
+    const dataDrama = await respons.json();
+    console.log("Data drama Supabase:", dataDrama);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+ambilDramaSupabase();
 </script>
 </body>
 </html>
