@@ -427,7 +427,82 @@ document.getElementById("tombolProfil").onclick = () => {
   const menu = document.getElementById("menuProfil");
   menu.hidden = !menu.hidden;
 };
-  
+
+ document.getElementById("tombolFavoritSaya").onclick = async () => {
+  const area = document.getElementById("daftarFavoritSaya");
+  const isi = document.getElementById("isiFavoritSaya");
+
+  area.hidden = false;
+  isi.textContent = "Memuat Favorit...";
+  document.getElementById("menuProfil").hidden = true;
+
+  const { data: { user }, error: errorLogin } =
+    await klienPengguna.auth.getUser();
+
+  if (errorLogin || !user) {
+    isi.textContent = "Silakan login terlebih dahulu.";
+    return;
+  }
+
+  const { data: favorit, error } = await klienPengguna
+    .from("favorites")
+    .select("drama_id")
+    .eq("user_id", user.id);
+
+  if (error) {
+    isi.textContent = "Gagal memuat Favorit.";
+    return;
+  }
+
+  if (!favorit || favorit.length === 0) {
+    isi.textContent = "Belum ada drama favorit.";
+    return;
+  }
+
+  const idDrama = favorit.map(item => item.drama_id);
+
+  const { data: drama, error: errorDrama } = await klienPengguna
+    .from("drama")
+    .select("id, judul, poster_url, link_tonton")
+    .in("id", idDrama);
+
+  if (errorDrama) {
+    isi.textContent = "Gagal memuat daftar drama.";
+    return;
+  }
+
+  isi.innerHTML = "";
+
+  drama.forEach(item => {
+    const kartu = document.createElement("div");
+    const judul = document.createElement("h3");
+    const poster = document.createElement("img");
+    const tautan = document.createElement("a");
+
+    judul.textContent = item.judul || "Tanpa judul";
+    kartu.appendChild(judul);
+
+    if (item.poster_url) {
+      poster.src = item.poster_url;
+      poster.alt = item.judul || "Poster drama";
+      poster.style.width = "150px";
+      kartu.appendChild(poster);
+    }
+
+    tautan.href = item.link_tonton || "#";
+    tautan.textContent = "▶️ Tonton Drama";
+
+    if (item.link_tonton) {
+      tautan.target = "_blank";
+      tautan.rel = "noopener noreferrer";
+    }
+
+    kartu.appendChild(tautan);
+    isi.appendChild(kartu);
+  });
+
+  area.scrollIntoView({ behavior: "smooth", block: "start" });
+}; 
   document.getElementById("daftarPengguna").onclick = async () => {
   const pesan = document.getElementById("pesanPengguna");
   pesan.textContent = "Memproses pendaftaran...";
