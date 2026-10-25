@@ -202,7 +202,7 @@ tampilkan();
 
   try {
     const respons = await fetch(
-      `${SUPABASE_URL}/rest/v1/drama?select=*`,
+    `${SUPABASE_URL}/rest/v1/drama?select=*&order=created_at.desc`,
       {
         headers: {
           apikey: SUPABASE_KEY,
