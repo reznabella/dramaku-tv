@@ -168,17 +168,28 @@ function tampilkan() {
   const kata = cari.value.toLowerCase();
   const kategoriDipilih = document.getElementById("filterKategori").value;
 
-const hasil = film.filter(f => {
+
+let hasil = film.filter(f => {
   const judulCocok = (f.judul || "")
     .toLowerCase()
     .includes(kata);
 
   const kategoriCocok =
     kategoriDipilih === "" ||
+    kategoriDipilih === "__terbaru__" ||
+    kategoriDipilih === "__favorit__" ||
     (f.kategori || "").trim().toLowerCase() ===
-    kategoriDipilih.trim().toLowerCase();
+      kategoriDipilih.trim().toLowerCase();
 
   return judulCocok && kategoriCocok;
+});
+
+if (kategoriDipilih === "__terbaru__") {
+  hasil.sort((a, b) =>
+    new Date(b.created_at || 0) - new Date(a.created_at || 0)
+  );
+}
+  
 });
   daftar.innerHTML = hasil.map(f => `
     <article class="film">
@@ -223,6 +234,7 @@ film.length = 0;
 dataDrama.forEach(d => {
   film.push({
   judul: d.judul,
+  created_at: d.created_at,
   poster: d.poster_url,
   link: d.link_tonton,
   kategori: d.kategori
@@ -230,8 +242,13 @@ dataDrama.forEach(d => {
 });
     const pilihanKategori = document.getElementById("filterKategori");
 const kategoriAktif = pilihanKategori.value;
+    
 
-pilihanKategori.innerHTML = '<option value="">Semua Kategori</option>';
+pilihanKategori.innerHTML = `
+  <option value="">Semua Kategori</option>
+  <option value="__terbaru__">Drama Terbaru</option>
+  <option value="__favorit__">Drama Terfavorit</option>
+`;
 
 const semuaKategori = [...new Set(
   film.map(f => f.kategori).filter(k => k && k.trim() !== "")
