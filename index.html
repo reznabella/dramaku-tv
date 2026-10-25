@@ -504,10 +504,22 @@ klienPengguna.auth.onAuthStateChange(() => {
 
 perbaruiProfilPengguna();
 
-document.getElementById("tombolProfil").onclick = () => {
+
+document.getElementById("tombolProfil").onclick = async () => {
+  const { data: { session } } =
+    await klienPengguna.auth.getSession();
+
   const menu = document.getElementById("menuProfil");
+
+  if (!session) {
+    menu.hidden = true;
+    await perbaruiProfilPengguna();
+    return;
+  }
+
   menu.hidden = !menu.hidden;
 };
+
 
  document.getElementById("tombolFavoritSaya").onclick = async () => {
   const area = document.getElementById("daftarFavoritSaya");
