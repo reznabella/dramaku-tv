@@ -648,34 +648,6 @@ document.getElementById("keluarPengguna").onclick = async () => {
   window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
-  document.getElementById("menuProfil").hidden = true;
-  document.getElementById("daftarFavoritSaya").hidden = true;
-  document.getElementById("isiFavoritSaya").innerHTML = "";
-  document.getElementById("loginPengguna").hidden = true;
-
-  await perbaruiProfilPengguna();
-
-  document.getElementById("cari").value = "";
-  document.getElementById("filterKategori").value = "";
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
-};
-
-  document.getElementById("menuProfil").hidden = true;
-  document.getElementById("daftarFavoritSaya").hidden = true;
-  document.getElementById("isiFavoritSaya").innerHTML = "";
-
-  await perbaruiProfilPengguna();
-
-  document.getElementById("cari").value = "";
-  document.getElementById("filterKategori").value = "";
-
-  if (typeof tampilkanDrama === "function") {
-    tampilkanDrama();
-  }
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
-};
   
 document.getElementById("tambahDrama").onclick = async () => {
   const pesan = document.getElementById("pesanPanel");
