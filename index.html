@@ -472,6 +472,7 @@ document.getElementById("panelAdmin").hidden = false;
 tampilkanDaftarDramaAdmin();
 };
 
+
 async function perbaruiProfilPengguna() {
   const { data: { session } } =
     await klienPengguna.auth.getSession();
@@ -481,14 +482,16 @@ async function perbaruiProfilPengguna() {
   const menuProfil = document.getElementById("menuProfil");
   const idPengguna = document.getElementById("idPengguna");
 
-  tombolProfil.hidden = !session;
-  tombolLogin.hidden = !!session;
-  idPengguna.hidden = !session;
+  const sudahLogin = !!session;
 
-  if (session) {
+  tombolProfil.hidden = !sudahLogin;
+  tombolLogin.hidden = sudahLogin;
+  idPengguna.hidden = !sudahLogin;
+  menuProfil.hidden = true;
+
+  if (sudahLogin) {
     idPengguna.textContent = "ID Pengguna: " + session.user.id;
   } else {
-    menuProfil.hidden = true;
     idPengguna.textContent = "";
     document.getElementById("daftarFavoritSaya").hidden = true;
     document.getElementById("loginPengguna").hidden = true;
