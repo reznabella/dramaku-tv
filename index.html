@@ -169,11 +169,18 @@ function tampilkan() {
   const kata = cari.value.toLowerCase();
   const kategoriDipilih = document.getElementById("filterKategori").value;
 
-  const hasil = film.filter(f =>
-    f.judul.toLowerCase().includes(kata) &&
-    (kategoriDipilih === "" || f.kategori === kategoriDipilih)
-  );
+const hasil = film.filter(f => {
+  const judulCocok = (f.judul || "")
+    .toLowerCase()
+    .includes(kata);
 
+  const kategoriCocok =
+    kategoriDipilih === "" ||
+    (f.kategori || "").trim().toLowerCase() ===
+    kategoriDipilih.trim().toLowerCase();
+
+  return judulCocok && kategoriCocok;
+});
   daftar.innerHTML = hasil.map(f => `
     <article class="film">
       <img src="${f.poster || 'https://placehold.co/300x450/252525/ffffff?text=Poster'}" alt="Poster ${f.judul}">
