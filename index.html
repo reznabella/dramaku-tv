@@ -95,6 +95,61 @@ footer { text-align: center; padding: 25px; color: #aaa; }
   padding: 7px 10px;
   cursor: pointer;
 }
+  #isiFavoritSaya {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+#isiFavoritSaya .film img {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+#isiFavoritSaya .film h3 {
+  font-size: 14px;
+  padding: 0 6px;
+}
+
+#isiFavoritSaya .film a,
+#isiFavoritSaya .film button {
+  margin: 6px;
+  font-size: 12px;
+}
+  #areaProfil {
+  text-align: center;
+  margin: 15px auto;
+}
+
+#tombolProfil {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+#tombolProfil .ikonProfil {
+  font-size: 60px;
+  line-height: 1.2;
+}
+
+#idPengguna {
+  font-size: 12px;
+  color: #bbb;
+  overflow-wrap: anywhere;
+  margin: 4px auto 10px;
+  max-width: 95%;
+}
+
+#menuProfil button {
+  margin: 4px;
+}
 </style>
 </head>
 <body>
@@ -110,13 +165,19 @@ footer { text-align: center; padding: 25px; color: #aaa; }
   <option value="">Semua Kategori</option>
 </select>
 
-<button id="tombolProfil" type="button" hidden>👤 Profil</button>
+<div id="areaProfil">
+  <button id="tombolProfil" type="button" hidden>
+    <span class="ikonProfil">👤</span>
+    <span>Profil</span>
+  </button>
 
-<div id="menuProfil" hidden>
-  <button id="tombolFavoritSaya" type="button">❤️ Favorit Saya</button>
-  <button id="keluarPengguna" type="button">🚪 Logout</button>
+  <p id="idPengguna" hidden></p>
+
+  <div id="menuProfil" hidden>
+    <button id="tombolFavoritSaya" type="button">❤️ Favorit Saya</button>
+    <button id="keluarPengguna" type="button">🚪 Logout</button>
+  </div>
 </div>
-
 
 <section id="daftarFavoritSaya" hidden>
   <h2>❤️ Favorit Saya</h2>
@@ -414,11 +475,16 @@ async function perbaruiProfilPengguna() {
 
   const tombolProfil = document.getElementById("tombolProfil");
   const menuProfil = document.getElementById("menuProfil");
+  const idPengguna = document.getElementById("idPengguna");
 
   tombolProfil.hidden = !session;
+  idPengguna.hidden = !session;
 
-  if (!session) {
+  if (session) {
+    idPengguna.textContent = "ID Pengguna: " + session.user.id;
+  } else {
     menuProfil.hidden = true;
+    idPengguna.textContent = "";
   }
 }
 
