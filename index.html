@@ -107,8 +107,7 @@ footer { text-align: center; padding: 25px; color: #aaa; }
 
   <select id="filterKategori" aria-label="Pilih kategori">
   <option value="">Semua Kategori</option>
-</select>
-  
+</select> 
   <button id="tombolAdmin" type="button">🔐 Admin</button>
   <section id="loginPengguna" hidden>
   <h2>Login / Daftar Pengguna</h2>
@@ -224,7 +223,9 @@ tampilkan();
 
   if (error || !user) {
     alert("Silakan login atau daftar akun terlebih dahulu.");
-    document.getElementById("loginPengguna").hidden = false;
+    const formLogin = document.getElementById("loginPengguna");
+    formLogin.hidden = false;
+    formLogin.scrollIntoView({ behavior: "smooth", block: "center" });
     return;
   }
 
