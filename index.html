@@ -200,10 +200,11 @@ film.length = 0;
 
 dataDrama.forEach(d => {
   film.push({
-    judul: d.judul,
-    poster: d.poster_url,
-    link: d.link_tonton
-  });
+  judul: d.judul,
+  poster: d.poster_url,
+  link: d.link_tonton,
+  kategori: d.kategori
+});
 });
     console.log("Isi film setelah dimuat:", film);
 
