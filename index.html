@@ -630,8 +630,6 @@ document.getElementById("masukPengguna").onclick = async () => {
   alert("Login pengguna berhasil!");
 };
 
-
-
 document.getElementById("keluarPengguna").onclick = async () => {
   const { error } = await klienPengguna.auth.signOut();
 
@@ -639,6 +637,16 @@ document.getElementById("keluarPengguna").onclick = async () => {
     alert("Logout gagal: " + error.message);
     return;
   }
+
+  document.getElementById("menuProfil").hidden = true;
+  document.getElementById("daftarFavoritSaya").hidden = true;
+  document.getElementById("isiFavoritSaya").innerHTML = "";
+  document.getElementById("loginPengguna").hidden = true;
+
+  await perbaruiProfilPengguna();
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
 
   document.getElementById("menuProfil").hidden = true;
   document.getElementById("daftarFavoritSaya").hidden = true;
