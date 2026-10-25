@@ -179,7 +179,7 @@ let hasil = film.filter(f => {
     kategoriDipilih === "__terbaru__" ||
     kategoriDipilih === "__favorit__" ||
     (f.kategori || "").trim().toLowerCase() ===
-      kategoriDipilih.trim().toLowerCase();
+    kategoriDipilih.trim().toLowerCase();
 
   return judulCocok && kategoriCocok;
 });
