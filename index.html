@@ -107,6 +107,16 @@ footer { text-align: center; padding: 25px; color: #aaa; }
 
   <select id="filterKategori" aria-label="Pilih kategori">
   <option value="">Semua Kategori</option>
+  <button id="tombolProfil" type="button" hidden>👤 Profil</button>
+  <div id="menuProfil" hidden>
+  <button id="tombolFavoritSaya" type="button">❤️ Favorit Saya</button>
+  <button id="keluarPengguna" type="button">🚪 Logout</button>
+</div>
+
+<section id="daftarFavoritSaya" hidden>
+  <h2>❤️ Favorit Saya</h2>
+  <div id="isiFavoritSaya"></div>
+</section>
 </select> 
   <button id="tombolAdmin" type="button">🔐 Admin</button>
   <section id="loginPengguna" hidden>
@@ -393,6 +403,30 @@ document.getElementById("panelAdmin").hidden = false;
 tampilkanDaftarDramaAdmin();
 };
 
+  async function perbaruiProfilPengguna() {
+    document.getElementById("tombolProfil").onclick = () => {
+  const menu = document.getElementById("menuProfil");
+    menu.hidden = !menu.hidden;
+};
+  const { data: { session } } =
+    await klienPengguna.auth.getSession();
+
+  const tombolProfil = document.getElementById("tombolProfil");
+  const menuProfil = document.getElementById("menuProfil");
+
+  tombolProfil.hidden = !session;
+
+  if (!session) {
+    menuProfil.hidden = true;
+  }
+}
+
+klienPengguna.auth.onAuthStateChange(() => {
+  setTimeout(perbaruiProfilPengguna, 0);
+});
+
+perbaruiProfilPengguna();
+  
   document.getElementById("daftarPengguna").onclick = async () => {
   const pesan = document.getElementById("pesanPengguna");
   pesan.textContent = "Memproses pendaftaran...";
