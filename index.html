@@ -612,15 +612,29 @@ document.getElementById("masukPengguna").onclick = async () => {
   alert("Login pengguna berhasil!");
 };
 
+
 document.getElementById("keluarPengguna").onclick = async () => {
   const { error } = await klienPengguna.auth.signOut();
 
   if (error) {
-    alert("Logout gagal.");
+    alert("Logout gagal: " + error.message);
     return;
   }
 
-  alert("Kamu sudah logout.");
+  document.getElementById("menuProfil").hidden = true;
+  document.getElementById("daftarFavoritSaya").hidden = true;
+  document.getElementById("isiFavoritSaya").innerHTML = "";
+
+  await perbaruiProfilPengguna();
+
+  document.getElementById("cari").value = "";
+  document.getElementById("filterKategori").value = "";
+
+  if (typeof tampilkanDrama === "function") {
+    tampilkanDrama();
+  }
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
 };
   
 document.getElementById("tambahDrama").onclick = async () => {
