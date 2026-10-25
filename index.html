@@ -184,6 +184,9 @@ footer { text-align: center; padding: 25px; color: #aaa; }
   <div id="isiFavoritSaya"></div>
 </section>
 </select> 
+  <button id="tombolLoginPengguna" type="button">
+  👤 Login Pengguna
+</button>
   <button id="tombolAdmin" type="button">🔐 Admin</button>
   <section id="loginPengguna" hidden>
   <h2>Login / Daftar Pengguna</h2>
@@ -474,10 +477,12 @@ async function perbaruiProfilPengguna() {
     await klienPengguna.auth.getSession();
 
   const tombolProfil = document.getElementById("tombolProfil");
+  const tombolLogin = document.getElementById("tombolLoginPengguna");
   const menuProfil = document.getElementById("menuProfil");
   const idPengguna = document.getElementById("idPengguna");
 
   tombolProfil.hidden = !session;
+  tombolLogin.hidden = !!session;
   idPengguna.hidden = !session;
 
   if (session) {
@@ -485,6 +490,8 @@ async function perbaruiProfilPengguna() {
   } else {
     menuProfil.hidden = true;
     idPengguna.textContent = "";
+    document.getElementById("daftarFavoritSaya").hidden = true;
+    document.getElementById("loginPengguna").hidden = true;
   }
 }
 
@@ -574,6 +581,17 @@ document.getElementById("tombolProfil").onclick = () => {
 
   area.scrollIntoView({ behavior: "smooth", block: "start" });
 }; 
+  document.getElementById("tombolLoginPengguna").onclick = () => {
+  const formLogin = document.getElementById("loginPengguna");
+  formLogin.hidden = !formLogin.hidden;
+
+  if (!formLogin.hidden) {
+    formLogin.scrollIntoView({
+      behavior: "smooth",
+      block: "center"
+    });
+  }
+};
   document.getElementById("daftarPengguna").onclick = async () => {
   const pesan = document.getElementById("pesanPengguna");
   pesan.textContent = "Memproses pendaftaran...";
@@ -613,6 +631,7 @@ document.getElementById("masukPengguna").onclick = async () => {
 };
 
 
+
 document.getElementById("keluarPengguna").onclick = async () => {
   const { error } = await klienPengguna.auth.signOut();
 
@@ -620,6 +639,19 @@ document.getElementById("keluarPengguna").onclick = async () => {
     alert("Logout gagal: " + error.message);
     return;
   }
+
+  document.getElementById("menuProfil").hidden = true;
+  document.getElementById("daftarFavoritSaya").hidden = true;
+  document.getElementById("isiFavoritSaya").innerHTML = "";
+  document.getElementById("loginPengguna").hidden = true;
+
+  await perbaruiProfilPengguna();
+
+  document.getElementById("cari").value = "";
+  document.getElementById("filterKategori").value = "";
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
 
   document.getElementById("menuProfil").hidden = true;
   document.getElementById("daftarFavoritSaya").hidden = true;
