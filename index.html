@@ -110,6 +110,15 @@ footer { text-align: center; padding: 25px; color: #aaa; }
 </select>
   
   <button id="tombolAdmin" type="button">🔐 Admin</button>
+  <section id="loginPengguna" hidden>
+  <h2>Login / Daftar Pengguna</h2>
+  <input id="emailPengguna" type="email" placeholder="Email kamu">
+  <input id="passwordPengguna" type="password" placeholder="Password (minimal 6 karakter)">
+  <button id="daftarPengguna" type="button">Daftar</button>
+  <button id="masukPengguna" type="button">Login</button>
+  <button id="keluarPengguna" type="button" hidden>Logout</button>
+  <p id="pesanPengguna"></p>
+</section>
   <section id="loginAdmin" hidden>
   <h2>Login Admin</h2>
   <input id="emailAdmin" type="email" placeholder="Email admin">
@@ -209,78 +218,53 @@ cari.addEventListener("input", tampilkan);
   .addEventListener("change", tampilkan);
   
 tampilkan();
-  
-async function toggleFavorit(dramaId) {
-  const SUPABASE_URL = "https://wizpznrhbmbfpajpaexf.supabase.co";
-  const SUPABASE_KEY = "sb_publishable_u2MHJvGkthIN0fULeAlDzQ_Zgnsg9Ap";
+  async function toggleFavorit(dramaId) {
+  const { data: { user }, error } =
+    await klienPengguna.auth.getUser();
 
-  const { data: { user }, error: loginError } = await fetch(
-    `${SUPABASE_URL}/auth/v1/user`,
-    {
-      headers: {
-        apikey: SUPABASE_KEY,
-        Authorization: `Bearer ${SUPABASE_KEY}`
-      }
-    }
-  ).then(async r => {
-    if (!r.ok) return { data: { user: null }, error: true };
-    return { data: { user: await r.json() }, error: null };
-  });
-
-  if (loginError || !user?.id) {
-    alert("Silakan login terlebih dahulu untuk menyimpan favorit.");
+  if (error || !user) {
+    alert("Silakan login atau daftar akun terlebih dahulu.");
+    document.getElementById("loginPengguna").hidden = false;
     return;
   }
 
-  const headers = {
-    apikey: SUPABASE_KEY,
-    Authorization: `Bearer ${SUPABASE_KEY}`,
-    "Content-Type": "application/json"
-  };
+  const { data: favorit, error: cekError } =
+    await klienPengguna
+      .from("favorites")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("drama_id", dramaId)
+      .maybeSingle();
 
-  const cek = await fetch(
-    `${SUPABASE_URL}/rest/v1/favorites?select=id&user_id=eq.${user.id}&drama_id=eq.${dramaId}`,
-    { headers }
-  );
-
-  if (!cek.ok) {
+  if (cekError) {
     alert("Gagal memeriksa Favorit.");
     return;
   }
 
-  const data = await cek.json();
+  if (favorit) {
+    const { error: hapusError } =
+      await klienPengguna
+        .from("favorites")
+        .delete()
+        .eq("id", favorit.id);
 
-  if (data.length > 0) {
-    const hapus = await fetch(
-      `${SUPABASE_URL}/rest/v1/favorites?user_id=eq.${user.id}&drama_id=eq.${dramaId}`,
-      {
-        method: "DELETE",
-        headers
-      }
-    );
-
-    if (!hapus.ok) {
+    if (hapusError) {
       alert("Gagal menghapus Favorit.");
       return;
     }
 
     alert("Drama dihapus dari Favorit.");
   } else {
-    const tambah = await fetch(
-      `${SUPABASE_URL}/rest/v1/favorites`,
-      {
-        method: "POST",
-        headers: { ...headers, Prefer: "return=minimal" },
-        body: JSON.stringify({
+    const { error: tambahError } =
+      await klienPengguna
+        .from("favorites")
+        .insert({
           user_id: user.id,
           drama_id: dramaId
-        })
-      }
-    );
+        });
 
-    if (!tambah.ok) {
-      const pesan = await tambah.text();
-      alert("Gagal menyimpan Favorit: " + pesan);
+    if (tambahError) {
+      alert("Gagal menyimpan Favorit.");
       return;
     }
 
@@ -408,6 +392,54 @@ document.getElementById("panelAdmin").hidden = false;
 tampilkanDaftarDramaAdmin();
 };
 
+  document.getElementById("daftarPengguna").onclick = async () => {
+  const pesan = document.getElementById("pesanPengguna");
+  pesan.textContent = "Memproses pendaftaran...";
+
+  const { data, error } = await klienPengguna.auth.signUp({
+    email: document.getElementById("emailPengguna").value.trim(),
+    password: document.getElementById("passwordPengguna").value
+  });
+
+  if (error) {
+    pesan.textContent = "Pendaftaran gagal: " + error.message;
+    return;
+  }
+
+  pesan.textContent = data.session
+    ? "Pendaftaran berhasil! Kamu sudah login."
+    : "Pendaftaran berhasil. Periksa email untuk konfirmasi.";
+};
+
+document.getElementById("masukPengguna").onclick = async () => {
+  const pesan = document.getElementById("pesanPengguna");
+  pesan.textContent = "Memeriksa akun...";
+
+  const { error } = await klienPengguna.auth.signInWithPassword({
+    email: document.getElementById("emailPengguna").value.trim(),
+    password: document.getElementById("passwordPengguna").value
+  });
+
+  if (error) {
+    pesan.textContent = "Login gagal: " + error.message;
+    return;
+  }
+
+  document.getElementById("loginPengguna").hidden = true;
+  alert("Login pengguna berhasil!");
+};
+
+document.getElementById("keluarPengguna").onclick = async () => {
+  const { error } = await klienPengguna.auth.signOut();
+
+  if (error) {
+    alert("Logout gagal.");
+    return;
+  }
+
+  alert("Kamu sudah logout.");
+};
+  
 document.getElementById("tambahDrama").onclick = async () => {
   const pesan = document.getElementById("pesanPanel");
   pesan.textContent = "Menyimpan drama...";
