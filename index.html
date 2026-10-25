@@ -403,11 +403,7 @@ document.getElementById("panelAdmin").hidden = false;
 tampilkanDaftarDramaAdmin();
 };
 
-  async function perbaruiProfilPengguna() {
-    document.getElementById("tombolProfil").onclick = () => {
-  const menu = document.getElementById("menuProfil");
-    menu.hidden = !menu.hidden;
-};
+async function perbaruiProfilPengguna() {
   const { data: { session } } =
     await klienPengguna.auth.getSession();
 
@@ -426,6 +422,11 @@ klienPengguna.auth.onAuthStateChange(() => {
 });
 
 perbaruiProfilPengguna();
+
+document.getElementById("tombolProfil").onclick = () => {
+  const menu = document.getElementById("menuProfil");
+  menu.hidden = !menu.hidden;
+};
   
   document.getElementById("daftarPengguna").onclick = async () => {
   const pesan = document.getElementById("pesanPengguna");
