@@ -105,6 +105,11 @@ footer { text-align: center; padding: 25px; color: #aaa; }
 </header>
 <main>
   <input id="cari" type="search" placeholder="Cari judul drama..." aria-label="Cari judul drama">
+
+  <select id="filterKategori" aria-label="Pilih kategori">
+  <option value="">Semua Kategori</option>
+</select>
+  
   <button id="tombolAdmin" type="button">🔐 Admin</button>
   <section id="loginAdmin" hidden>
   <h2>Login Admin</h2>
@@ -162,7 +167,13 @@ const kosong = document.getElementById("kosong");
 
 function tampilkan() {
   const kata = cari.value.toLowerCase();
-  const hasil = film.filter(f => f.judul.toLowerCase().includes(kata));
+  const kategoriDipilih = document.getElementById("filterKategori").value;
+
+  const hasil = film.filter(f =>
+    f.judul.toLowerCase().includes(kata) &&
+    (kategoriDipilih === "" || f.kategori === kategoriDipilih)
+  );
+
   daftar.innerHTML = hasil.map(f => `
     <article class="film">
       <img src="${f.poster || 'https://placehold.co/300x450/252525/ffffff?text=Poster'}" alt="Poster ${f.judul}">
@@ -170,6 +181,7 @@ function tampilkan() {
       <a href="${f.link || '#'}" target="_blank" rel="noopener">Tonton / Info</a>
     </article>
   `).join("");
+
   kosong.hidden = hasil.length !== 0;
 }
 cari.addEventListener("input", tampilkan);
