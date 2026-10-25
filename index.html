@@ -185,6 +185,10 @@ function tampilkan() {
   kosong.hidden = hasil.length !== 0;
 }
 cari.addEventListener("input", tampilkan);
+  
+  document.getElementById("filterKategori")
+  .addEventListener("change", tampilkan);
+  
 tampilkan();
   async function ambilDramaSupabase() {
   const SUPABASE_URL = "https://wizpznrhbmbfpajpaexf.supabase.co";
@@ -218,9 +222,26 @@ dataDrama.forEach(d => {
   kategori: d.kategori
 });
 });
-    console.log("Isi film setelah dimuat:", film);
+    const pilihanKategori = document.getElementById("filterKategori");
+const kategoriAktif = pilihanKategori.value;
 
+pilihanKategori.innerHTML = '<option value="">Semua Kategori</option>';
+
+const semuaKategori = [...new Set(
+  film.map(f => f.kategori).filter(k => k && k.trim() !== "")
+)].sort();
+
+semuaKategori.forEach(kategori => {
+  const opsi = document.createElement("option");
+  opsi.value = kategori;
+  opsi.textContent = kategori;
+  pilihanKategori.appendChild(opsi);
+});
+
+pilihanKategori.value = kategoriAktif;
 tampilkan();
+    console.log("Isi film setelah dimuat:", film);
+    
   } catch (error) {
     console.error(error);
   }
