@@ -1199,39 +1199,29 @@ document.getElementById('bukaLoginDariProfil').addEventListener('click', () => {
 })();
     
 function pindahTab(tab) {
-  const elemenBeranda = [
-    document.getElementById("cari"),
-    document.querySelector("#kategoriNav").previousElementSibling,
-    document.getElementById("kategoriNav"),
-    document.getElementById("filterKategori"),
-    document.getElementById("judulDaftar"),
-    document.getElementById("areaProfil"),
-    document.getElementById("daftarFavoritSaya"),
-    document.getElementById("loginPengguna"),
-    document.getElementById("loginAdmin"),
-    document.getElementById("panelAdmin"),
-    document.getElementById("daftar"),
-    document.getElementById("kosong"),
-    document.getElementById("pagination")
-  ];
-
+  const main = document.querySelector("main");
   const profil = document.getElementById("profileScreen");
   const vip = document.getElementById("vipScreen");
   const footer = document.querySelector("footer");
 
-  elemenBeranda.forEach(el => {
-    if (el) el.hidden = tab !== "home";
+  // Sembunyikan semua bagian main, kecuali halaman yang dipilih
+  Array.from(main.children).forEach(el => {
+    if (el.id === "profileScreen") {
+      el.hidden = tab !== "profile";
+    } else if (el.id === "vipScreen") {
+      el.hidden = tab !== "vip";
+    } else {
+      el.hidden = tab !== "home";
+    }
   });
 
-  profil.hidden = tab !== "profile";
-  vip.hidden = tab !== "vip";
   footer.hidden = tab !== "home";
 
   document.querySelectorAll("#bottomNav button").forEach(tombol => {
     tombol.classList.toggle("aktif", tombol.dataset.tab === tab);
   });
 
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  window.scrollTo(0, 0);
 }
 
 document.querySelectorAll("#bottomNav button").forEach(tombol => {
@@ -1239,8 +1229,8 @@ document.querySelectorAll("#bottomNav button").forEach(tombol => {
     pindahTab(tombol.dataset.tab);
   });
 });
-
 pindahTab("home");
+  
 </script>
 </body>
 </html>
