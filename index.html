@@ -311,7 +311,7 @@ function tampilkan() {
       <img src="${f.poster || 'https://placehold.co/300x450/252525/ffffff?text=Poster'}" alt="Poster ${f.judul || 'drama'}" loading="lazy">
       <h3>${f.judul || 'Tanpa judul'}</h3>
       <a href="${f.link || '#'}" target="_blank" rel="noopener">Tonton / Info</a>
-      <button class="btn-favorit" onclick="toggleFavorit(${Number(f.id) || 0})">❤️ Favorit</button>
+      <button class="btn-favorit" onclick="simpanFavoritLokal(${Number(f.id) || 0})">♡ Simpan</button>
     </article>`).join("");
   kosong.hidden = hasil.length !== 0;
   const pag = document.getElementById('pagination');
