@@ -616,8 +616,11 @@ document.getElementById("tombolProfil").onclick = async () => {
 
   const { data, error } = await klienPengguna.auth.signUp({
     email: document.getElementById("emailPengguna").value.trim(),
-    password: document.getElementById("passwordPengguna").value
-  });
+    password: document.getElementById("passwordPengguna").value,
+    options: {
+      emailRedirectTo: "https://reznabella.github.io/dramaku-tv/"
+  }
+});
 
   if (error) {
     pesan.textContent = "Pendaftaran gagal: " + error.message;
