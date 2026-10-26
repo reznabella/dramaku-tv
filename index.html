@@ -1199,20 +1199,34 @@ document.getElementById('bukaLoginDariProfil').addEventListener('click', () => {
 })();
     
 function pindahTab(tab) {
-  const beranda = document.querySelector("main");
-  const footer = document.querySelector("footer");
+  const elemenBeranda = [
+    document.getElementById("cari"),
+    document.querySelector("#kategoriNav").previousElementSibling,
+    document.getElementById("kategoriNav"),
+    document.getElementById("filterKategori"),
+    document.getElementById("judulDaftar"),
+    document.getElementById("areaProfil"),
+    document.getElementById("daftarFavoritSaya"),
+    document.getElementById("loginPengguna"),
+    document.getElementById("loginAdmin"),
+    document.getElementById("panelAdmin"),
+    document.getElementById("daftar"),
+    document.getElementById("kosong"),
+    document.getElementById("pagination")
+  ];
+
   const profil = document.getElementById("profileScreen");
   const vip = document.getElementById("vipScreen");
+  const footer = document.querySelector("footer");
 
-  // Sembunyikan semua halaman terlebih dahulu
-  beranda.hidden = tab !== "home";
+  elemenBeranda.forEach(el => {
+    if (el) el.hidden = tab !== "home";
+  });
+
   profil.hidden = tab !== "profile";
   vip.hidden = tab !== "vip";
-
-  // Footer hanya tampil di Beranda
   footer.hidden = tab !== "home";
 
-  // Tandai menu yang aktif
   document.querySelectorAll("#bottomNav button").forEach(tombol => {
     tombol.classList.toggle("aktif", tombol.dataset.tab === tab);
   });
@@ -1226,7 +1240,6 @@ document.querySelectorAll("#bottomNav button").forEach(tombol => {
   });
 });
 
-// Tampilkan Beranda saat website pertama kali dibuka
 pindahTab("home");
 </script>
 </body>
