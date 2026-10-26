@@ -1137,100 +1137,50 @@ tombol.type = "button";
 
 </script>
   <script>
-
 function bukaTab(tab) {
-  const home = tab === 'home';
-  document.getElementById('cari').hidden = !home;
-  document.querySelector('.section-title').hidden = !home;
-  document.getElementById('kategoriNav').hidden = !home;
-  document.getElementById('filterKategori').hidden = true;
-  document.getElementById('judulDaftar').hidden = !home;
-  document.getElementById('daftar').hidden = !home;
-  document.getElementById('kosong').hidden = true;
-  document.getElementById('pagination').hidden = !home;
-  document.getElementById('vipScreen').hidden = tab !== 'vip';
-  document.getElementById('profileScreen').hidden = tab !== 'profile';
-  document.getElementById('areaProfil').hidden = tab !== 'profile';
-  document.getElementById('daftarFavoritSaya').hidden = tab !== 'profile';
-  document.getElementById('loginPengguna').hidden = tab !== 'profile' || document.getElementById('loginPengguna').hidden;
-  document.querySelectorAll('#bottomNav button').forEach(b => b.classList.toggle('aktif', b.dataset.tab === tab));
-  if (home) { cari.value=''; document.getElementById('filterKategori').value=''; halamanAktif=1; renderKategoriNav(); tampilkan(); }
-}
-document.querySelectorAll('#bottomNav button').forEach(b => b.addEventListener('click', () => bukaTab(b.dataset.tab)));
-document.getElementById('bukaLoginDariProfil').addEventListener('click', () => { document.getElementById('loginPengguna').hidden=false; document.getElementById('loginPengguna').scrollIntoView({behavior:'smooth'}); });
+  const home = tab === "home";
 
-(async function daftarTelegram() {
-  if (!window.Telegram || !window.Telegram.WebApp) return;
+  document.getElementById("cari").hidden = !home;
+  document.querySelector(".section-title").hidden = !home;
+  document.getElementById("kategoriNav").hidden = !home;
+  document.getElementById("filterKategori").hidden = !home;
+  document.getElementById("judulDaftar").hidden = !home;
+  document.getElementById("daftar").hidden = !home;
+  document.getElementById("kosong").hidden = !home;
+  document.getElementById("pagination").hidden = !home;
 
-  const tg = window.Telegram.WebApp;
-  tg.ready();
+  document.getElementById("areaProfil").hidden = true;
+  document.getElementById("daftarFavoritSaya").hidden = true;
+  document.getElementById("loginPengguna").hidden = true;
+  document.getElementById("loginAdmin").hidden = true;
+  document.getElementById("panelAdmin").hidden = true;
 
-  const initData = tg.initData;
-  if (!initData) {
-    console.log("Buka Dramaku TV melalui Telegram untuk mendaftar.");
-    return;
-  }
+  document.getElementById("vipScreen").hidden = tab !== "vip";
+  document.getElementById("profileScreen").hidden = tab !== "profile";
 
-  try {
-    const response = await fetch(
-      "https://wizpznrhbmbfpajpaexf.supabase.co/functions/v1/smooth-action",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "apikey": "sb_publishable_u2MHJvGkthIN0fULeAlDzQ_Zgnsg9Ap"
-        },
-        body: JSON.stringify({ initData })
-      }
-    );
+  document.querySelector("footer").hidden = !home;
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      console.error("Pendaftaran gagal:", data.error);
-      return;
-    }
-
-    console.log("ID Dramaku:", data.dramaku_id);
-    console.log("Pengguna Telegram berhasil didaftarkan.");
-  } catch (error) {
-    console.error("Koneksi pendaftaran gagal:", error);
-  }
-})();
-    
-function pindahTab(tab) {
-  const main = document.querySelector("main");
-  const profil = document.getElementById("profileScreen");
-  const vip = document.getElementById("vipScreen");
-  const footer = document.querySelector("footer");
-
-  // Sembunyikan semua bagian main, kecuali halaman yang dipilih
-  Array.from(main.children).forEach(el => {
-    if (el.id === "profileScreen") {
-      el.hidden = tab !== "profile";
-    } else if (el.id === "vipScreen") {
-      el.hidden = tab !== "vip";
-    } else {
-      el.hidden = tab !== "home";
-    }
+  document.querySelectorAll("#bottomNav button").forEach(b => {
+    b.classList.toggle("aktif", b.dataset.tab === tab);
   });
 
-  footer.hidden = tab !== "home";
-
-  document.querySelectorAll("#bottomNav button").forEach(tombol => {
-    tombol.classList.toggle("aktif", tombol.dataset.tab === tab);
-  });
+  if (home) {
+    document.getElementById("cari").value = "";
+    document.getElementById("filterKategori").value = "";
+    halamanAktif = 1;
+    renderKategoriNav();
+    tampilkan();
+  }
 
   window.scrollTo(0, 0);
 }
 
-document.querySelectorAll("#bottomNav button").forEach(tombol => {
-  tombol.addEventListener("click", () => {
-    pindahTab(tombol.dataset.tab);
-  });
+document.querySelectorAll("#bottomNav button").forEach(b => {
+  b.addEventListener("click", () => bukaTab(b.dataset.tab));
 });
-pindahTab("home");
-  
+
+bukaTab("home");
+
 </script>
 </body>
 </html>
