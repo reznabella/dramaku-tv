@@ -1197,6 +1197,37 @@ document.getElementById('bukaLoginDariProfil').addEventListener('click', () => {
     console.error("Koneksi pendaftaran gagal:", error);
   }
 })();
+    
+function pindahTab(tab) {
+  const beranda = document.querySelector("main");
+  const footer = document.querySelector("footer");
+  const profil = document.getElementById("profileScreen");
+  const vip = document.getElementById("vipScreen");
+
+  // Sembunyikan semua halaman terlebih dahulu
+  beranda.hidden = tab !== "home";
+  profil.hidden = tab !== "profile";
+  vip.hidden = tab !== "vip";
+
+  // Footer hanya tampil di Beranda
+  footer.hidden = tab !== "home";
+
+  // Tandai menu yang aktif
+  document.querySelectorAll("#bottomNav button").forEach(tombol => {
+    tombol.classList.toggle("aktif", tombol.dataset.tab === tab);
+  });
+
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+document.querySelectorAll("#bottomNav button").forEach(tombol => {
+  tombol.addEventListener("click", () => {
+    pindahTab(tombol.dataset.tab);
+  });
+});
+
+// Tampilkan Beranda saat website pertama kali dibuka
+pindahTab("home");
 </script>
 </body>
 </html>
