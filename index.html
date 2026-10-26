@@ -153,21 +153,52 @@ footer { text-align: center; padding: 25px; color: #aaa; }
   #tombolProfil[hidden] {
   display: none !important;
 }
+
+/* Tampilan beranda Dramaku TV */
+body { padding-bottom: 82px; background:#0d0d0f; color:#f5f5f5; }
+header { text-align:left; padding:18px 16px 15px; background:#151518; border-bottom:1px solid #29292f; display:flex; align-items:center; gap:11px; }
+header:before { content:"🎬"; display:grid; place-items:center; width:42px; height:42px; border-radius:12px; background:#e63946; font-size:22px; flex-shrink:0; }
+header h1 { font-size:22px; margin:0 0 3px; color:#fff; }
+header p { font-size:12px; color:#aaa; }
+main { padding:16px 14px 24px; max-width:1100px; }
+#cari { margin:0 0 22px; border-radius:12px; background:#1c1c21; border:1px solid #33333a; }
+#filterKategori { display:none; }
+#kategoriNav { display:flex; gap:20px; overflow-x:auto; white-space:nowrap; padding:2px 0 14px; margin-bottom:12px; scrollbar-width:none; }
+#kategoriNav button { border:0; background:transparent; color:#bdbdc5; padding:4px 0; font-size:14px; cursor:pointer; }
+#kategoriNav button.aktif { color:#ff4d5a; font-weight:700; border-bottom:2px solid #ff4d5a; }
+.section-title { font-size:17px; margin:4px 0 14px; font-weight:700; }
+.grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px 10px; }
+.film { background:transparent; border-radius:8px; overflow:hidden; min-width:0; }
+.film img { width:100%; aspect-ratio:2/3; object-fit:cover; border-radius:7px; background:#25252b; }
+.film h3 { font-size:12px; line-height:1.4; padding:0; margin:8px 1px 9px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:34px; }
+.film a { margin:0; padding:8px 3px; font-size:11px; font-weight:700; border-radius:6px; }
+.film .btn-favorit { display:block; width:calc(100% - 2px); margin:7px 1px 0; padding:6px 2px; font-size:10px; color:#eee; background:#24242a; border:1px solid #393940; border-radius:6px; }
+#pagination { display:flex; justify-content:center; align-items:center; gap:7px; flex-wrap:wrap; margin:24px 0 8px; }
+#pagination button { background:#202026; color:#eee; border:1px solid #37373e; border-radius:7px; padding:8px 11px; cursor:pointer; }
+#pagination button.aktif { background:#e63946; border-color:#e63946; }
+#pagination button:disabled { opacity:.35; cursor:default; }
+#bottomNav { position:fixed; z-index:50; left:0; right:0; bottom:0; display:grid; grid-template-columns:repeat(3,1fr); background:#17171b; border-top:1px solid #33333a; padding:8px 8px max(8px, env(safe-area-inset-bottom)); }
+#bottomNav button { background:transparent; border:0; color:#a9a9b2; font-size:11px; padding:5px 2px; cursor:pointer; }
+#bottomNav button span { display:block; font-size:20px; margin-bottom:3px; }
+#bottomNav button.aktif { color:#ff4d5a; }
+#vipScreen,#profileScreen { max-width:700px; margin:22px auto; padding:18px; background:#19191e; border-radius:12px; }
+@media (min-width:650px) { .grid { grid-template-columns:repeat(4,minmax(0,1fr)); gap:22px 14px; } .film h3 {font-size:14px;} }
+
 </style>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
 <header>
-  <h1>Dramaku TV</h1>
-  <p>Drama Jepang Subtitle Indonesia</p>
+  <div><h1>Dramaku TV</h1><p>Drama Jepang Subtitle Indonesia</p></div>
 </header>
 <main>
-  <input id="cari" type="search" placeholder="Cari judul drama..." aria-label="Cari judul drama">
-
-  
-<select id="filterKategori" aria-label="Pilih kategori">
-  <option value="">Semua Kategori</option>
-</select>
+  <input id="cari" type="search" placeholder="⌕  Cari judul drama..." aria-label="Cari judul drama">
+  <h2 class="section-title">PILIH KATEGORI</h2>
+  <nav id="kategoriNav" aria-label="Kategori drama"></nav>
+  <select id="filterKategori" aria-label="Pilih kategori">
+    <option value="">Semua Kategori</option>
+  </select>
+  <h2 class="section-title" id="judulDaftar">Film Terbaru</h2>
 
 <div id="areaProfil">
   <button id="tombolProfil" type="button" hidden>
@@ -179,7 +210,7 @@ footer { text-align: center; padding: 25px; color: #aaa; }
 
   <div id="menuProfil" hidden>
     <button id="tombolFavoritSaya" type="button">❤️ Favorit Saya</button>
-    <button id="keluarPengguna" type="button">🚪 Logout</button>
+    <button id="keluarPenggunaMenu" type="button">🚪 Logout</button>
   </div>
 </div>
 
@@ -187,7 +218,6 @@ footer { text-align: center; padding: 25px; color: #aaa; }
   <h2>❤️ Favorit Saya</h2>
   <div id="isiFavoritSaya"></div>
 </section>
-</select> 
   <button id="tombolLoginPengguna" type="button">
   👤 Login Pengguna
 </button>
@@ -198,7 +228,7 @@ footer { text-align: center; padding: 25px; color: #aaa; }
   <input id="passwordPengguna" type="password" placeholder="Password (minimal 6 karakter)">
   <button id="daftarPengguna" type="button">Daftar</button>
   <button id="masukPengguna" type="button">Login</button>
-  <button id="keluarPengguna" type="button" hidden>Logout</button>
+  <button id="keluarPenggunaForm" type="button" hidden>Logout</button>
   <p id="pesanPengguna"></p>
 </section>
   <section id="loginAdmin" hidden>
@@ -240,8 +270,16 @@ footer { text-align: center; padding: 25px; color: #aaa; }
 </section>
   <div class="grid" id="daftar"></div>
   <p id="kosong" hidden>Drama tidak ditemukan.</p>
+  <nav id="pagination" aria-label="Halaman daftar drama"></nav>
+  <section id="vipScreen" hidden><h2>Beli VIP</h2><p>Informasi VIP akan segera tersedia.</p></section>
+  <section id="profileScreen" hidden><h2>Profil</h2><p>Login untuk mengelola profil dan favorit kamu.</p><button type="button" id="bukaLoginDariProfil">Login Pengguna</button></section>
 </main>
 <footer>© Dramaku TV</footer>
+<nav id="bottomNav" aria-label="Navigasi utama">
+  <button type="button" class="aktif" data-tab="home"><span>⌂</span>Beranda</button>
+  <button type="button" data-tab="vip"><span>♛</span>Beli VIP</button>
+  <button type="button" data-tab="profile"><span>👤</span>Profil</button>
+</nav>
 <script>
 const film = [
   {
@@ -255,49 +293,62 @@ const daftar = document.getElementById("daftar");
 const cari = document.getElementById("cari");
 const kosong = document.getElementById("kosong");
 
+let halamanAktif = 1;
+const perHalaman = 12;
 function tampilkan() {
   const kata = cari.value.toLowerCase();
   const kategoriDipilih = document.getElementById("filterKategori").value;
-
-
-let hasil = film.filter(f => {
-  const judulCocok = (f.judul || "")
-    .toLowerCase()
-    .includes(kata);
-
-  const kategoriCocok =
-    kategoriDipilih === "" ||
-    kategoriDipilih === "__terbaru__" ||
-    kategoriDipilih === "__favorit__" ||
-    (f.kategori || "").trim().toLowerCase() ===
-    kategoriDipilih.trim().toLowerCase();
-
-  return judulCocok && kategoriCocok;
-});
-
-if (kategoriDipilih === "__terbaru__") {
-  hasil.sort((a, b) =>
-    new Date(b.created_at || 0) - new Date(a.created_at || 0)
-  );
-}
-  
-daftar.innerHTML = hasil.map(f => `
-  <article class="film">
-    <img src="${f.poster || 'https://placehold.co/300x450/252525/ffffff?text=Poster'}" alt="Poster ${f.judul}">
-    <h3>${f.judul}</h3>
-    <a href="${f.link || '#'}" target="_blank" rel="noopener">Tonton / Info</a>
-    <button class="btn-favorit" onclick="toggleFavorit(${f.id})">
-      ❤️ Favorit
-    </button>
-  </article>
-`).join("");
-
+  let hasil = film.filter(f => {
+    const judulCocok = (f.judul || "").toLowerCase().includes(kata);
+    const kategoriCocok = kategoriDipilih === "" || kategoriDipilih === "__terbaru__" || kategoriDipilih === "__favorit__" || (f.kategori || "").trim().toLowerCase() === kategoriDipilih.trim().toLowerCase();
+    return judulCocok && kategoriCocok;
+  });
+  if (kategoriDipilih === "__terbaru__" || kategoriDipilih === "") {
+    hasil.sort((a,b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+  }
+  const jumlahHalaman = Math.max(1, Math.ceil(hasil.length / perHalaman));
+  halamanAktif = Math.min(halamanAktif, jumlahHalaman);
+  const awal = (halamanAktif - 1) * perHalaman;
+  const tampil = hasil.slice(awal, awal + perHalaman);
+  daftar.innerHTML = tampil.map(f => `
+    <article class="film">
+      <img src="${f.poster || 'https://placehold.co/300x450/252525/ffffff?text=Poster'}" alt="Poster ${f.judul || 'drama'}" loading="lazy">
+      <h3>${f.judul || 'Tanpa judul'}</h3>
+      <a href="${f.link || '#'}" target="_blank" rel="noopener">Tonton / Info</a>
+      <button class="btn-favorit" onclick="toggleFavorit(${Number(f.id) || 0})">❤️ Favorit</button>
+    </article>`).join("");
   kosong.hidden = hasil.length !== 0;
+  const pag = document.getElementById('pagination');
+  pag.innerHTML = '';
+  if (hasil.length > perHalaman) {
+    const addBtn = (label, page, disabled=false, active=false) => {
+      const b = document.createElement('button'); b.textContent = label; b.disabled = disabled;
+      if(active) b.classList.add('aktif');
+      b.onclick = () => { halamanAktif = page; tampilkan(); document.getElementById('judulDaftar').scrollIntoView({behavior:'smooth',block:'start'}); };
+      pag.appendChild(b);
+    };
+    addBtn('Kembali', halamanAktif-1, halamanAktif===1);
+    for(let i=1;i<=jumlahHalaman;i++) addBtn(String(i),i,false,i===halamanAktif);
+    addBtn('Lanjut', halamanAktif+1, halamanAktif===jumlahHalaman);
+  }
 }
-cari.addEventListener("input", tampilkan);
+function renderKategoriNav() {
+  const nav = document.getElementById('kategoriNav');
+  const sel = document.getElementById('filterKategori');
+  nav.innerHTML = '';
+  const defaults = [{label:'Semua',value:''},{label:'Jepang',value:'Jepang'},{label:'China',value:'China'},{label:'Korea',value:'Korea'},{label:'Barat',value:'Barat'}];
+  defaults.forEach(item => {
+    const b=document.createElement('button'); b.textContent=item.label;
+    b.classList.toggle('aktif',sel.value===item.value);
+    b.onclick=()=>{ sel.value=item.value; halamanAktif=1; renderKategoriNav(); tampilkan(); };
+    nav.appendChild(b);
+  });
+}
+
+cari.addEventListener("input", () => { halamanAktif=1; tampilkan(); });
   
   document.getElementById("filterKategori")
-  .addEventListener("change", tampilkan);
+  .addEventListener("change", () => { halamanAktif=1; renderKategoriNav(); tampilkan(); });
   
 tampilkan();
   async function toggleFavorit(dramaId) {
@@ -395,7 +446,11 @@ const kategoriAktif = pilihanKategori.value;
     
 
 pilihanKategori.innerHTML = `
-  <option value="">Semua Kategori</option>
+  <option value="">Semua</option>
+  <option value="Jepang">Jepang</option>
+  <option value="China">China</option>
+  <option value="Korea">Korea</option>
+  <option value="Barat">Barat</option>
   <option value="__terbaru__">Drama Terbaru</option>
   <option value="__favorit__">Drama Terfavorit</option>
 `;
@@ -410,7 +465,7 @@ semuaKategori.forEach(kategori => {
   opsi.textContent = kategori;
   pilihanKategori.appendChild(opsi);
 });
-
+renderKategoriNav();
 tampilkan();
     console.log("Isi film setelah dimuat:", film);
     console.log("Filter kategori terbaru aktif");
@@ -652,7 +707,7 @@ document.getElementById("masukPengguna").onclick = async () => {
   alert("Login pengguna berhasil!");
 };
 
-document.getElementById("keluarPengguna").onclick = async () => {
+async function keluarPenggunaSekarang() {
   const { error } = await klienPengguna.auth.signOut();
 
   if (error) {
@@ -668,7 +723,9 @@ document.getElementById("keluarPengguna").onclick = async () => {
   await perbaruiProfilPengguna();
 
   window.scrollTo({ top: 0, behavior: "smooth" });
-};
+}
+document.getElementById("keluarPenggunaMenu").onclick = keluarPenggunaSekarang;
+document.getElementById("keluarPenggunaForm").onclick = keluarPenggunaSekarang;
 
   
 document.getElementById("tambahDrama").onclick = async () => {
@@ -880,6 +937,28 @@ tombol.type = "button";
 
 </script>
   <script>
+
+function bukaTab(tab) {
+  const home = tab === 'home';
+  document.getElementById('cari').hidden = !home;
+  document.querySelector('.section-title').hidden = !home;
+  document.getElementById('kategoriNav').hidden = !home;
+  document.getElementById('filterKategori').hidden = true;
+  document.getElementById('judulDaftar').hidden = !home;
+  document.getElementById('daftar').hidden = !home;
+  document.getElementById('kosong').hidden = true;
+  document.getElementById('pagination').hidden = !home;
+  document.getElementById('vipScreen').hidden = tab !== 'vip';
+  document.getElementById('profileScreen').hidden = tab !== 'profile';
+  document.getElementById('areaProfil').hidden = tab !== 'profile';
+  document.getElementById('daftarFavoritSaya').hidden = tab !== 'profile';
+  document.getElementById('loginPengguna').hidden = tab !== 'profile' || document.getElementById('loginPengguna').hidden;
+  document.querySelectorAll('#bottomNav button').forEach(b => b.classList.toggle('aktif', b.dataset.tab === tab));
+  if (home) { cari.value=''; document.getElementById('filterKategori').value=''; halamanAktif=1; renderKategoriNav(); tampilkan(); }
+}
+document.querySelectorAll('#bottomNav button').forEach(b => b.addEventListener('click', () => bukaTab(b.dataset.tab)));
+document.getElementById('bukaLoginDariProfil').addEventListener('click', () => { document.getElementById('loginPengguna').hidden=false; document.getElementById('loginPengguna').scrollIntoView({behavior:'smooth'}); });
+
 (async function daftarTelegram() {
   if (!window.Telegram || !window.Telegram.WebApp) return;
 
