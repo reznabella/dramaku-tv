@@ -879,5 +879,45 @@ tombol.type = "button";
 }
 
 </script>
+  <script>
+(async function daftarTelegram() {
+  if (!window.Telegram || !window.Telegram.WebApp) return;
+
+  const tg = window.Telegram.WebApp;
+  tg.ready();
+
+  const initData = tg.initData;
+  if (!initData) {
+    console.log("Buka Dramaku TV melalui Telegram untuk mendaftar.");
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      "https://wizpznrhbmbfpajpaexf.supabase.co/functions/v1/smooth-action",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": "sb_publishable_u2MHJvGkthIN0fULeAlDzQ_Zgnsg9Ap"
+        },
+        body: JSON.stringify({ initData })
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error("Pendaftaran gagal:", data.error);
+      return;
+    }
+
+    console.log("ID Dramaku:", data.dramaku_id);
+    console.log("Pengguna Telegram berhasil didaftarkan.");
+  } catch (error) {
+    console.error("Koneksi pendaftaran gagal:", error);
+  }
+})();
+</script>
 </body>
 </html>
