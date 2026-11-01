@@ -483,10 +483,27 @@ async function bukaDetail(id) {
   const view = document.createElement("span"); view.className = "detail-views"; view.textContent = "👁️ " + Number(drama.view_count || 0) + " tayangan";
   meta.append(category, view);
   const actions = document.createElement("div"); actions.className = "detail-actions";
-  const watch = document.createElement("a"); watch.className = "btn-primary"; watch.textContent = "▶️ Tonton Sekarang";
-  const watchUrl = drama.link || drama.link_tonton || "";
-  if (/^https?:\/\//i.test(watchUrl)) { watch.href = watchUrl; watch.target = "_blank"; watch.rel = "noopener noreferrer"; }
-  else { watch.href = "#"; watch.addEventListener("click", e=>{e.preventDefault(); alert("Link tontonan belum tersedia.");}); }
+  const watch = document.createElement("button");
+  watch.type = "button";
+  watch.className = "btn-primary";
+  watch.textContent = "▶️ Tonton Sekarang";
+  watch.addEventListener("click", () => {
+    if (!drama.id) {
+      alert("ID drama tidak ditemukan. Silakan coba lagi.");
+      return;
+    }
+    const lanjut = confirm("Video ini akan dikirim melalui bot Dramaku TV.\n\nLanjutkan ke bot?");
+    if (!lanjut) return;
+
+    const botUrl = `https://t.me/Dramakuvip_bot?start=watch_${encodeURIComponent(drama.id)}`;
+    const telegramWebApp = window.Telegram && window.Telegram.WebApp;
+
+    if (telegramWebApp && typeof telegramWebApp.openTelegramLink === "function") {
+      telegramWebApp.openTelegramLink(botUrl);
+    } else {
+      window.location.href = botUrl;
+    }
+  });
   const fav = document.createElement("button"); fav.className = "btn-secondary";
   const refreshFav = () => { fav.textContent = isFavorit(drama.id) ? "★ Favorit" : "♡ Simpan Favorit"; };
   refreshFav(); fav.addEventListener("click", ()=>{ toggleFavoritLokal(drama.id); refreshFav(); });
