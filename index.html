@@ -211,6 +211,8 @@ label { display:block; font-size:13px; color:#aaa; margin:12px 0 6px; }
 </div>
 
 <script>
+const TELEGRAM_ADMIN_ID = "5214858622";
+  
 const SUPABASE_URL = "https://wizpznrhbmbfpajpaexf.supabase.co";
 const SUPABASE_KEY = "sb_publishable_u2MHJvGkthIN0fULeAlDzQ_Zgnsg9Ap";
 
@@ -681,10 +683,16 @@ document.getElementById("filterKategori").addEventListener("change", e=>{
 });
 
 let clickCount=0;
-document.getElementById("footerEl").addEventListener("click", ()=>{
-  clickCount++; if(clickCount>=7){ document.getElementById("fiturAkun").hidden=false; document.getElementById("loginAdmin").hidden=false; clickCount=0; document.getElementById("loginAdmin").scrollIntoView({behavior:"smooth"}); }
-  setTimeout(()=>{clickCount=0;},3000);
-});
+const identitasTelegram = getTelegramIdentity();
+
+if (
+  identitasTelegram &&
+  identitasTelegram.id === TELEGRAM_ADMIN_ID
+) {
+  document.getElementById("fiturAkun").hidden = false;
+  document.getElementById("loginAdmin").hidden = false;
+}
+
 document.getElementById("headerLogo").addEventListener("click", ()=>{
   bukaTab("home"); cari.value=""; kategoriAktif="Semua"; renderKategoriNav(); applyFilter();
 });
