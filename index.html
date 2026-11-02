@@ -819,7 +819,9 @@ renderVIP();
 applyFilter();
 ambilDramaSupabase();
 perbaruiProfilPengguna();
-bukaTab("home");
+  
+const halamanAwal = new URLSearchParams(window.location.search).get("open");
+bukaTab(halamanAwal === "vip" ? "vip" : "home");
 
 klienPengguna.auth.onAuthStateChange(()=>setTimeout(()=>{if(!document.getElementById("profileScreen").hidden)perbaruiProfilPengguna();},0));
 /* SETUP WAJIB DI SUPABASE:
