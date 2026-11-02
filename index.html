@@ -408,40 +408,36 @@ function tampilkan() {
 
 function renderPagination(total) {
   pagination.innerHTML = "";
-  if (filteredFilms.length <= perHalaman && total<=1) return;
+
+  if (total <= 1) return;
 
   const btnPrev = document.createElement("button");
   btnPrev.textContent = "Kembali";
-  btnPrev.disabled = halamanAktif===1;
-  btnPrev.onclick = ()=>{ if(halamanAktif>1){ halamanAktif--; tampilkan(); window.scrollTo(0,0);} };
+  btnPrev.disabled = halamanAktif === 1;
+  btnPrev.onclick = () => {
+    if (halamanAktif > 1) {
+      halamanAktif--;
+      tampilkan();
+      window.scrollTo(0, 0);
+    }
+  };
   pagination.appendChild(btnPrev);
 
-  let pagesToShow = [];
-  if (total <=7) {
-    for(let i=1;i<=total;i++) pagesToShow.push(i);
-  } else {
-    pagesToShow.push(1);
-    if (halamanAktif>3) pagesToShow.push("...");
-    for(let i=Math.max(2,halamanAktif-1); i<=Math.min(total-1,halamanAktif+1); i++) pagesToShow.push(i);
-    if (halamanAktif<total-2) pagesToShow.push("...");
-    pagesToShow.push(total);
-  }
+  const nomorHalaman = document.createElement("span");
+  nomorHalaman.className = "info-halaman";
+  nomorHalaman.textContent = `${halamanAktif}/${filteredFilms.length}`;
+  pagination.appendChild(nomorHalaman);
 
-  pagesToShow.forEach(p=>{
-    if(p==="..."){
-      const span=document.createElement("span"); span.textContent="..."; span.className="info-halaman"; pagination.appendChild(span); return;
+  const btnNext = document.createElement("button");
+  btnNext.textContent = "Lanjut";
+  btnNext.disabled = halamanAktif === total;
+  btnNext.onclick = () => {
+    if (halamanAktif < total) {
+      halamanAktif++;
+      tampilkan();
+      window.scrollTo(0, 0);
     }
-    const btn=document.createElement("button");
-    btn.textContent = `${p}/${total}`;
-    if(p===halamanAktif) btn.className="aktif";
-    btn.onclick=()=>{ halamanAktif=p; tampilkan(); window.scrollTo(0,0); };
-    pagination.appendChild(btn);
-  });
-
-  const btnNext=document.createElement("button");
-  btnNext.textContent="Lanjut";
-  btnNext.disabled = halamanAktif===total;
-  btnNext.onclick=()=>{ if(halamanAktif<total){ halamanAktif++; tampilkan(); window.scrollTo(0,0);} };
+  };
   pagination.appendChild(btnNext);
 }
 
