@@ -566,7 +566,7 @@ if (telegramWebApp && typeof telegramWebApp.openTelegramLink === "function") {
   if (counted) view.textContent = "👁️ " + Number(drama.view_count || 0) + " tayangan";
 }
 
-function pilihPaket(label, harga, hari) {
+window.pilihPaket = function(label, harga, hari) {
   document.getElementById("modalJudulPaket").textContent = label;
 
   document.getElementById("modalHargaPaket").textContent =
@@ -575,7 +575,7 @@ function pilihPaket(label, harga, hari) {
   window.paketVIPTerpilih = "vip_" + hari + "_hari";
 
   document.getElementById("modalPembayaran").hidden = false;
-}
+};
 
 function renderVIP() {
   const container = document.getElementById("daftarPaketVIP");
