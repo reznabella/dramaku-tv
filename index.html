@@ -91,6 +91,18 @@ footer { text-align:center; padding:25px; color:#aaa; font-size:12px; }
 .aksi-drama-admin { display:flex; justify-content:flex-end; gap:6px; flex-wrap:wrap; margin-top:8px; }
 .aksi-drama-admin button { padding:7px 10px; cursor:pointer; border-radius:6px; border:1px solid #444; background:#2a2a2e; color:#eee; }
 #areaProfil, #loginPengguna, #loginAdmin, #panelAdmin { background:#19191e; border-radius:12px; padding:16px; margin:18px auto; max-width:700px; }
+.admin-menu { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; margin:14px 0 20px; }
+.admin-menu button { padding:12px 8px; border:1px solid #3a3a43; border-radius:9px; background:#24242b; color:#ddd; font-weight:700; cursor:pointer; }
+.admin-menu button.aktif { background:#e63946; border-color:#e63946; color:#fff; }
+.admin-vip-stats { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin:14px 0; }
+.admin-vip-stat { background:#222229; border:1px solid #363640; border-radius:10px; padding:13px; }
+.admin-vip-stat small { display:block; color:#aaa; font-size:12px; margin-bottom:7px; }
+.admin-vip-stat strong { font-size:22px; }
+.admin-vip-table-wrap { overflow-x:auto; margin-top:14px; }
+.admin-vip-table { width:100%; min-width:520px; border-collapse:collapse; font-size:12px; }
+.admin-vip-table th,.admin-vip-table td { padding:11px 9px; text-align:left; border-bottom:1px solid #35353d; }
+.admin-vip-table th { color:#aaa; font-weight:600; }
+.admin-vip-empty { padding:18px; text-align:center; color:#aaa; background:#222229; border-radius:9px; }
 label { display:block; font-size:13px; color:#aaa; margin:12px 0 6px; }
 @media (min-width:650px) { .grid, .profil-favorit-grid { grid-template-columns:repeat(4,minmax(0,1fr)); gap:22px 14px; } .film h3 {font-size:14px;} }
 @media (max-width:520px) { .profil-container { margin:14px 0; padding:15px; } .profil-avatar { width:60px; height:60px; font-size:29px; } .profil-identitas h2 { font-size:21px; } .profil-info { grid-template-columns:1fr; } .profil-favorit-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
@@ -180,13 +192,37 @@ label { display:block; font-size:13px; color:#aaa; margin:12px 0 6px; }
     <section id="panelAdmin" hidden>
       <h2>Panel Admin Dramaku TV</h2>
       <div style="text-align:right;margin-bottom:15px"><button id="logoutAdmin" type="button">Logout</button></div>
-      <label>Judul drama</label><input id="judulBaru" type="text" placeholder="Masukkan judul drama">
-      <label>URL poster</label><input id="posterBaru" type="url" placeholder="URL poster (opsional)">
-      <label>Atau unggah poster dari komputer</label><input id="filePoster" type="file" accept="image/*">
-      <label>Kategori</label><input id="kategoriBaru" type="text" placeholder="Jepang / China / Korea / Barat">
-      <label>Link tontonan</label><input id="linkBaru" type="url" placeholder="Tempel link tontonan">
-      <button id="tambahDrama" type="button">Tambah Drama</button><p id="pesanPanel"></p>
-      <hr><h3>Kelola Drama</h3><div id="daftarDramaAdmin"></div>
+      <nav class="admin-menu" aria-label="Menu Panel Admin">
+        <button type="button" id="menuKelolaDrama" class="aktif">🎬 Kelola Drama</button>
+        <button type="button" id="menuMemberVIP">💎 Member VIP</button>
+      </nav>
+      <div id="kelolaDramaPanel">
+        <label>Judul drama</label><input id="judulBaru" type="text" placeholder="Masukkan judul drama">
+        <label>URL poster</label><input id="posterBaru" type="url" placeholder="URL poster (opsional)">
+        <label>Atau unggah poster dari komputer</label><input id="filePoster" type="file" accept="image/*">
+        <label>Kategori</label><input id="kategoriBaru" type="text" placeholder="Jepang / China / Korea / Barat">
+        <label>Link tontonan</label><input id="linkBaru" type="url" placeholder="Tempel link tontonan">
+        <button id="tambahDrama" type="button">Tambah Drama</button><p id="pesanPanel"></p>
+        <hr><h3>Kelola Drama</h3><div id="daftarDramaAdmin"></div>
+      </div>
+      <section id="memberVIPPanel" hidden>
+        <h3 style="margin-top:0">💎 Data Member VIP</h3>
+        <p style="color:#aaa;font-size:13px;line-height:1.6">Ringkasan dan daftar anggota VIP Dramaku TV.</p>
+        <div class="admin-vip-stats">
+          <div class="admin-vip-stat"><small>Total Member VIP</small><strong id="vipTotalAdmin">—</strong></div>
+          <div class="admin-vip-stat"><small>VIP Aktif</small><strong id="vipAktifAdmin">—</strong></div>
+          <div class="admin-vip-stat"><small>VIP Kedaluwarsa</small><strong id="vipExpiredAdmin">—</strong></div>
+          <div class="admin-vip-stat"><small>Segera Berakhir</small><strong id="vipSegeraAdmin">—</strong></div>
+        </div>
+        <h4>Daftar Member</h4>
+        <div class="admin-vip-table-wrap">
+          <table class="admin-vip-table">
+            <thead><tr><th>Nama Telegram</th><th>ID Telegram</th><th>Status</th><th>VIP Sampai</th></tr></thead>
+            <tbody id="daftarMemberVIP"><tr><td colspan="4" class="admin-vip-empty">Tampilan siap. Data member akan dihubungkan ke Supabase pada tahap berikutnya.</td></tr></tbody>
+          </table>
+        </div>
+        <p id="pesanMemberVIP" class="notice">Tahap ini baru menambahkan tampilan menu. Data VIP belum diambil dari database.</p>
+      </section>
     </section>
   </section>
 </main>
@@ -372,36 +408,40 @@ function tampilkan() {
 
 function renderPagination(total) {
   pagination.innerHTML = "";
-
-  if (total <= 1) return;
+  if (filteredFilms.length <= perHalaman && total<=1) return;
 
   const btnPrev = document.createElement("button");
   btnPrev.textContent = "Kembali";
-  btnPrev.disabled = halamanAktif === 1;
-  btnPrev.onclick = () => {
-    if (halamanAktif > 1) {
-      halamanAktif--;
-      tampilkan();
-      window.scrollTo(0, 0);
-    }
-  };
+  btnPrev.disabled = halamanAktif===1;
+  btnPrev.onclick = ()=>{ if(halamanAktif>1){ halamanAktif--; tampilkan(); window.scrollTo(0,0);} };
   pagination.appendChild(btnPrev);
 
-  const nomorHalaman = document.createElement("span");
-  nomorHalaman.className = "info-halaman";
-  nomorHalaman.textContent = `${halamanAktif}/${filteredFilms.length}`;
-  pagination.appendChild(nomorHalaman);
+  let pagesToShow = [];
+  if (total <=7) {
+    for(let i=1;i<=total;i++) pagesToShow.push(i);
+  } else {
+    pagesToShow.push(1);
+    if (halamanAktif>3) pagesToShow.push("...");
+    for(let i=Math.max(2,halamanAktif-1); i<=Math.min(total-1,halamanAktif+1); i++) pagesToShow.push(i);
+    if (halamanAktif<total-2) pagesToShow.push("...");
+    pagesToShow.push(total);
+  }
 
-  const btnNext = document.createElement("button");
-  btnNext.textContent = "Lanjut";
-  btnNext.disabled = halamanAktif === total;
-  btnNext.onclick = () => {
-    if (halamanAktif < total) {
-      halamanAktif++;
-      tampilkan();
-      window.scrollTo(0, 0);
+  pagesToShow.forEach(p=>{
+    if(p==="..."){
+      const span=document.createElement("span"); span.textContent="..."; span.className="info-halaman"; pagination.appendChild(span); return;
     }
-  };
+    const btn=document.createElement("button");
+    btn.textContent = `${p}/${total}`;
+    if(p===halamanAktif) btn.className="aktif";
+    btn.onclick=()=>{ halamanAktif=p; tampilkan(); window.scrollTo(0,0); };
+    pagination.appendChild(btn);
+  });
+
+  const btnNext=document.createElement("button");
+  btnNext.textContent="Lanjut";
+  btnNext.disabled = halamanAktif===total;
+  btnNext.onclick=()=>{ if(halamanAktif<total){ halamanAktif++; tampilkan(); window.scrollTo(0,0);} };
   pagination.appendChild(btnNext);
 }
 
@@ -494,12 +534,11 @@ async function bukaDetail(id) {
     const botUrl = `https://t.me/Dramakuvip_bot?start=watch_${encodeURIComponent(drama.id)}`;
     const telegramWebApp = window.Telegram && window.Telegram.WebApp;
 
-  if (telegramWebApp && typeof telegramWebApp.openTelegramLink === "function") {
-    telegramWebApp.openTelegramLink(botUrl);
-    telegramWebApp.close();
-  } else {
-    window.location.href = botUrl;
-  }
+    if (telegramWebApp && typeof telegramWebApp.openTelegramLink === "function") {
+      telegramWebApp.openTelegramLink(botUrl);
+    } else {
+      window.location.href = botUrl;
+    }
   });
   const fav = document.createElement("button"); fav.className = "btn-secondary";
   const refreshFav = () => { fav.textContent = isFavorit(drama.id) ? "★ Favorit" : "♡ Simpan Favorit"; };
@@ -682,7 +721,6 @@ document.getElementById("footerEl").addEventListener("click", ()=>{
   clickCount++; if(clickCount>=7){ document.getElementById("fiturAkun").hidden=false; document.getElementById("loginAdmin").hidden=false; clickCount=0; document.getElementById("loginAdmin").scrollIntoView({behavior:"smooth"}); }
   setTimeout(()=>{clickCount=0;},3000);
 });
-
 document.getElementById("headerLogo").addEventListener("click", ()=>{
   bukaTab("home"); cari.value=""; kategoriAktif="Semua"; renderKategoriNav(); applyFilter();
 });
@@ -697,8 +735,19 @@ document.getElementById("masukAdmin").onclick=async()=>{
   if(error){pesan.textContent="Login gagal. Periksa email dan password.";return;}
   const {data:admin,error:errorAdmin}=await klienAdmin.from("admin_users").select("user_id").eq("user_id",data.user.id).maybeSingle();
   if(errorAdmin||!admin){await klienAdmin.auth.signOut();pesan.textContent="Akun ini tidak terdaftar sebagai admin.";return;}
-  pesan.textContent="Login admin berhasil!";document.getElementById("loginAdmin").hidden=true;document.getElementById("panelAdmin").hidden=false;tampilkanDaftarDramaAdmin();
+  pesan.textContent="Login admin berhasil!";document.getElementById("loginAdmin").hidden=true;document.getElementById("panelAdmin").hidden=false;
+  pilihMenuAdmin("drama");
+  tampilkanDaftarDramaAdmin();
 };
+function pilihMenuAdmin(menu){
+  const dramaAktif = menu === "drama";
+  document.getElementById("kelolaDramaPanel").hidden = !dramaAktif;
+  document.getElementById("memberVIPPanel").hidden = dramaAktif;
+  document.getElementById("menuKelolaDrama").classList.toggle("aktif", dramaAktif);
+  document.getElementById("menuMemberVIP").classList.toggle("aktif", !dramaAktif);
+}
+document.getElementById("menuKelolaDrama").addEventListener("click",()=>pilihMenuAdmin("drama"));
+document.getElementById("menuMemberVIP").addEventListener("click",()=>pilihMenuAdmin("vip"));
 document.getElementById("tambahDrama").onclick=async()=>{
   const pesan=document.getElementById("pesanPanel");pesan.textContent="Menyimpan drama...";
   const judul=document.getElementById("judulBaru").value.trim(),file=document.getElementById("filePoster").files[0];let posterUrl=document.getElementById("posterBaru").value.trim();
@@ -774,8 +823,7 @@ renderVIP();
 applyFilter();
 ambilDramaSupabase();
 perbaruiProfilPengguna();
-const halamanTujuan = new URLSearchParams(window.location.search).get("open");
-bukaTab(halamanTujuan === "vip" ? "vip" : "home");
+bukaTab("home");
 
 klienPengguna.auth.onAuthStateChange(()=>setTimeout(()=>{if(!document.getElementById("profileScreen").hidden)perbaruiProfilPengguna();},0));
 /* SETUP WAJIB DI SUPABASE:
