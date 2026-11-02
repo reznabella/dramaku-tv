@@ -236,12 +236,28 @@ label { display:block; font-size:13px; color:#aaa; margin:12px 0 6px; }
 
 <div id="modalPembayaran" class="modal" hidden>
   <div class="modal-box">
-    <h3 id="modalJudulPaket">Pilih Paket</h3>
+    <h3 id="modalJudulPaket">Uji Pembayaran VIP</h3>
+
     <p id="modalHargaPaket" style="color:#ff4d5a; font-weight:700;"></p>
-    <p style="font-size:12px; color:#aaa; line-height:1.6;">Untuk tahap ini pembayaran dilakukan manual. Silakan screenshot pilihan paket dan hubungi admin Telegram untuk aktivasi. Integrasi QRIS otomatis akan diaktifkan terpisah.</p>
+
+    <p style="font-size:12px; color:#aaa; line-height:1.6;">
+      Pembayaran masih dalam tahap pengujian Sandbox Kasera Pay.
+      Tagihan uji sebesar Rp1.000 untuk VIP 1 hari.
+      Tidak menggunakan uang sungguhan.
+    </p>
+
     <div style="display:grid; gap:8px; margin-top:14px;">
-      <a id="btnHubungiAdmin" href="#" target="_blank" class="btn-primary" style="text-decoration:none; text-align:center;">Hubungi Admin</a>
-      <button class="btn-secondary" onclick="document.getElementById('modalPembayaran').hidden=true">Tutup</button>
+      <button
+        class="btn-primary"
+        onclick="buatPembayaranUji()">
+        Buat Tagihan Uji
+      </button>
+
+      <button
+        class="btn-secondary"
+        onclick="document.getElementById('modalPembayaran').hidden=true">
+        Tutup
+      </button>
     </div>
   </div>
 </div>
@@ -838,6 +854,55 @@ klienPengguna.auth.onAuthStateChange(()=>setTimeout(()=>{if(!document.getElement
    5) Jangan membuka INSERT/UPDATE/DELETE tabel drama kepada anon; batasi CRUD pada admin terautentikasi.
    6) Atur TELEGRAM_ADMIN_USERNAME di atas sebelum publikasi.
 */
+  async function buatPembayaranUji() {
+  try {
+    const initData = window.Telegram?.WebApp?.initData;
+
+    if (!initData) {
+      alert("Silakan buka Dramaku TV melalui Telegram.");
+      return;
+    }
+
+    const tombol = document.querySelector(
+      '#modalPembayaran button.btn-primary'
+    );
+
+    tombol.disabled = true;
+    tombol.textContent = "Membuat tagihan...";
+
+    const response = await fetch(
+      "https://wizpznrhbmbfpajpaexf.supabase.co/functions/v1/bayar-pesanan",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          initData: initData,
+          package_id: "uji_1_hari"
+        })
+      }
+    );
+
+    const hasil = await response.json();
+
+    if (!response.ok || !hasil.success) {
+      throw new Error(hasil.error || "Gagal membuat tagihan.");
+    }
+
+    window.open(hasil.checkout_url, "_blank");
+
+  } catch (error) {
+    alert(error.message);
+  } finally {
+    const tombol = document.querySelector(
+      '#modalPembayaran button.btn-primary'
+    );
+
+    tombol.disabled = false;
+    tombol.textContent = "Buat Tagihan Uji";
+  }
+}
 </script>
 </body>
 </html>
