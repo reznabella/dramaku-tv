@@ -529,12 +529,12 @@ async function bukaDetail(id) {
 
     const botUrl = `https://t.me/Dramakuvip_bot?start=watch_${encodeURIComponent(drama.id)}`;
     const telegramWebApp = window.Telegram && window.Telegram.WebApp;
-
     if (telegramWebApp && typeof telegramWebApp.openTelegramLink === "function") {
       telegramWebApp.openTelegramLink(botUrl);
-    } else {
-      window.location.href = botUrl;
-    }
+      telegramWebApp.close();
+  } else {
+    window.location.href = botUrl;
+  }
   });
   const fav = document.createElement("button"); fav.className = "btn-secondary";
   const refreshFav = () => { fav.textContent = isFavorit(drama.id) ? "★ Favorit" : "♡ Simpan Favorit"; };
