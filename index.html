@@ -907,23 +907,41 @@ klienPengguna.auth.onAuthStateChange(()=>setTimeout(()=>{if(!document.getElement
    5) Jangan membuka INSERT/UPDATE/DELETE tabel drama kepada anon; batasi CRUD pada admin terautentikasi.
    6) Atur TELEGRAM_ADMIN_USERNAME di atas sebelum publikasi.
 */
+
 async function buatPembayaranUji() {
   const tombol = document.querySelector(
     '#modalPembayaran button.btn-primary'
   );
+
+  // Gunakan Supabase anon/public key, BUKAN service_role key.
+  const SUPABASE_ANON_KEY = "sb_publishable_u2MHJvGkthIN0fULeAlDzQ_Zgnsg9Ap";
 
   try {
     const initData = window.Telegram?.WebApp?.initData;
     const packageId = window.paketVIPTerpilih;
 
     if (!initData) {
-      alert("Silakan buka Dramaku TV melalui Telegram.");
-      return;
+      throw new Error(
+        "Silakan buka Dramaku TV melalui Telegram."
+      );
     }
 
     if (!packageId) {
-      alert("Silakan pilih paket VIP terlebih dahulu.");
-      return;
+      throw new Error(
+        "Silakan pilih paket VIP terlebih dahulu."
+      );
+    }
+
+    if (!tombol) {
+      throw new Error("Tombol pembayaran tidak ditemukan.");
+    }
+
+    if (
+      SUPABASE_ANON_KEY === "ISI_ANON_PUBLIC_KEY_KAMU"
+    ) {
+      throw new Error(
+        "Masukkan Supabase anon/public key terlebih dahulu."
+      );
     }
 
     tombol.disabled = true;
@@ -934,7 +952,9 @@ async function buatPembayaranUji() {
       {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "apikey": SUPABASE_ANON_KEY,
+          "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
         },
         body: JSON.stringify({
           initData: initData,
@@ -946,16 +966,24 @@ async function buatPembayaranUji() {
     const hasil = await response.json();
 
     if (!response.ok || !hasil.success) {
-      throw new Error(hasil.error || "Gagal membuat tagihan.");
+      throw new Error(
+        hasil.error || `Gagal membuat tagihan (${response.status}).`
+      );
+    }
+
+    if (!hasil.checkout_url) {
+      throw new Error("Link pembayaran tidak ditemukan.");
     }
 
     window.location.href = hasil.checkout_url;
 
   } catch (error) {
-    alert(error.message);
+    alert(error.message || "Terjadi kesalahan.");
   } finally {
-    tombol.disabled = false;
-    tombol.textContent = "Bayar Sekarang";
+    if (tombol) {
+      tombol.disabled = false;
+      tombol.textContent = "Bayar Sekarang";
+    }
   }
 }
 </script>
