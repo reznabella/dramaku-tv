@@ -811,7 +811,59 @@ function pilihMenuAdmin(menu){
   document.getElementById("memberVIPPanel").hidden = dramaAktif;
   document.getElementById("menuKelolaDrama").classList.toggle("aktif", dramaAktif);
   document.getElementById("menuMemberVIP").classList.toggle("aktif", !dramaAktif);
+  if(!dramaAktif) tampilkanMemberVIP();
 }
+
+async function tampilkanMemberVIP(){
+  const tbody = document.getElementById("daftarMemberVIP");
+  const pesan = document.getElementById("pesanMemberVIP");
+  const totalEl = document.getElementById("vipTotalAdmin");
+  const aktifEl = document.getElementById("vipAktifAdmin");
+  const expiredEl = document.getElementById("vipExpiredAdmin");
+  const segeraEl = document.getElementById("vipSegeraAdmin");
+  try {
+    tbody.innerHTML = '<tr><td colspan="4" class="admin-vip-empty">Memuat data VIP...</td></tr>';
+    pesan.textContent = "Mengambil data dari Supabase...";
+    const { data, error } = await klienAdmin.from("telegram_users").select("telegram_id, telegram_name, username, vip_status, vip_until, first_joined_at").order("vip_until", {ascending:false}).limit(100);
+    if(error) throw error;
+    const all = data || [];
+    const vipAll = all.filter(u => String(u.vip_status).toLowerCase() === 'vip');
+    const now = new Date();
+    const aktif = vipAll.filter(u => u.vip_until && new Date(u.vip_until) > now);
+    const expired = vipAll.filter(u => !u.vip_until || new Date(u.vip_until) <= now);
+    const segera = aktif.filter(u => {
+      const diff = (new Date(u.vip_until) - now) / (1000*60*60*24);
+      return diff <= 2;
+    });
+    totalEl.textContent = vipAll.length;
+    aktifEl.textContent = aktif.length;
+    expiredEl.textContent = expired.length;
+    segeraEl.textContent = segera.length;
+    if(!all.length){
+      tbody.innerHTML = '<tr><td colspan="4" class="admin-vip-empty">Belum ada member.</td></tr>';
+      pesan.textContent = "Belum ada data member di telegram_users.";
+      return;
+    }
+    tbody.innerHTML = "";
+    all.forEach(u => {
+      const tr = document.createElement("tr");
+      const nama = u.telegram_name || u.username || "-";
+      const id = u.telegram_id || "-";
+      const status = String(u.vip_status || "non-vip").toUpperCase();
+      const sampai = u.vip_until ? new Date(u.vip_until).toLocaleString("id-ID") : "-";
+      const isVip = status === "VIP";
+      const isExpired = isVip && u.vip_until && new Date(u.vip_until) <= now;
+      tr.innerHTML = `<td>${nama}</td><td>${id}</td><td><span style="padding:3px 8px;border-radius:10px;font-weight:700;background:${isVip ? (isExpired ? '#5a2a2a' : '#1a4d2e') : '#333'};color:${isVip ? '#fff' : '#aaa'}">${isExpired ? 'EXPIRED' : status}</span></td><td>${sampai}</td>`;
+      tbody.appendChild(tr);
+    });
+    pesan.textContent = `Menampilkan ${all.length} member. Data dari telegram_users (VIP otomatis dari pembayaran QRIS).`;
+  } catch(e){
+    console.error(e);
+    tbody.innerHTML = `<tr><td colspan="4" class="admin-vip-empty">Gagal memuat: ${e.message}</td></tr>`;
+    pesan.textContent = "Gagal mengambil data: " + e.message + ". Pastikan RLS telegram_users allow SELECT untuk anon/authenticated.";
+  }
+}
+
 document.getElementById("menuKelolaDrama").addEventListener("click",()=>pilihMenuAdmin("drama"));
 document.getElementById("menuMemberVIP").addEventListener("click",()=>pilihMenuAdmin("vip"));
 document.getElementById("tambahDrama").onclick=async()=>{
