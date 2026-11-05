@@ -824,7 +824,7 @@ async function tampilkanMemberVIP(){
   try {
     tbody.innerHTML = '<tr><td colspan="4" class="admin-vip-empty">Memuat data VIP...</td></tr>';
     pesan.textContent = "Mengambil data dari Supabase...";
-    const { data, error } = await klienAdmin.from("telegram_users").select("telegram_id, telegram_name, username, vip_status, vip_until, first_joined_at").order("vip_until", {ascending:false}).limit(100);
+    const { data, error } = await klienAdmin.from("telegram_users").select("telegram_id, vip_status, vip_until, first_joined_at").order("vip_until", {ascending:false}).limit(100);
     if(error) throw error;
     const all = data || [];
     const vipAll = all.filter(u => String(u.vip_status).toLowerCase() === 'vip');
@@ -847,7 +847,7 @@ async function tampilkanMemberVIP(){
     tbody.innerHTML = "";
     all.forEach(u => {
       const tr = document.createElement("tr");
-      const nama = u.telegram_name || u.username || "-";
+      const nama = u.telegram_id ? `User ${u.telegram_id}` : "-";
       const id = u.telegram_id || "-";
       const status = String(u.vip_status || "non-vip").toUpperCase();
       const sampai = u.vip_until ? new Date(u.vip_until).toLocaleString("id-ID") : "-";
