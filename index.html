@@ -135,6 +135,12 @@ label { display:block; font-size:13px; color:#aaa; margin:12px 0 6px; }
 .btn-bookmark-top svg { width:14px; height:16px; fill:none; stroke:white; stroke-width:1.8; stroke-linejoin:round; }
 .btn-bookmark-top.favorit svg { fill:white; stroke:white; }
 
+
+/* FIX: Biar Beli VIP di app sama di Beli VIP Lagi SAMA - grid 2 kolom, tanpa 1 Hari */
+#daftarPaketVIP { display:grid !important; grid-template-columns:1fr 1fr !important; gap:10px !important; }
+#daftarPaketVIP .vip-card { display:flex !important; justify-content:space-between !important; align-items:center !important; margin:0 !important; padding:12px !important; }
+#daftarPaketVIP .vip-card .btn-pilih, #daftarPaketVIP .vip-card button { padding:6px 12px !important; font-size:11px !important; min-width:auto !important; }
+
 </style>
 </head>
 <body>
@@ -1180,6 +1186,60 @@ function initLiveChat() {
   };
 }
 document.addEventListener('DOMContentLoaded', initLiveChat);
+</script>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Filter out 1 Hari paket dari array PAKET_VIP jika ada
+  if(window.PAKET_VIP && Array.isArray(window.PAKET_VIP)) {
+    window.PAKET_VIP = window.PAKET_VIP.filter(p => {
+      const label = (p.label || p.hari || '').toString().toLowerCase();
+      const harga = (p.harga || '').toString();
+      return !(label.includes('1 hari') || (label.includes('1') && harga.includes('1.000')));
+    });
+  }
+  
+  // Juga override renderVIP untuk hide 1 Hari dan pakai grid
+  const origRenderVIP = window.renderVIP;
+  if(origRenderVIP) {
+    window.renderVIP = function() {
+      origRenderVIP();
+      setTimeout(() => {
+        const container = document.getElementById('daftarPaketVIP');
+        if(!container) return;
+        container.style.display = 'grid';
+        container.style.gridTemplateColumns = '1fr 1fr';
+        container.style.gap = '10px';
+        const cards = container.querySelectorAll('.vip-card');
+        let visibleCount = 0;
+        cards.forEach(card => {
+          const txt = card.textContent.toLowerCase();
+          if(txt.includes('1 hari') && txt.includes('1.000')) {
+            card.style.display = 'none';
+          } else {
+            visibleCount++;
+          }
+        });
+        // Center last card if odd
+        const visibleCards = Array.from(cards).filter(c => c.style.display !== 'none');
+        if(visibleCards.length % 2 === 1) {
+          visibleCards[visibleCards.length-1].style.gridColumn = '1 / span 2';
+          visibleCards[visibleCards.length-1].style.maxWidth = '52%';
+          visibleCards[visibleCards.length-1].style.margin = '0 auto';
+          visibleCards[visibleCards.length-1].style.width = '100%';
+        }
+      }, 100);
+    };
+  }
+  
+  // Jalankan lagi kalau dibuka via ?open=vip
+  setTimeout(() => {
+    if(window.location.search.includes('open=vip') || window.location.hash.includes('vip')) {
+      if(window.renderVIP) window.renderVIP();
+    }
+  }, 500);
+});
 </script>
 
 </body>
