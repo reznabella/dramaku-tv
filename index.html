@@ -106,6 +106,22 @@ footer { text-align:center; padding:25px; color:#aaa; font-size:12px; }
 label { display:block; font-size:13px; color:#aaa; margin:12px 0 6px; }
 @media (min-width:650px) { .grid, .profil-favorit-grid { grid-template-columns:repeat(4,minmax(0,1fr)); gap:22px 14px; } .film h3 {font-size:14px;} }
 @media (max-width:520px) { .profil-container { margin:14px 0; padding:15px; } .profil-avatar { width:60px; height:60px; font-size:29px; } .profil-identitas h2 { font-size:21px; } .profil-info { grid-template-columns:1fr; } .profil-favorit-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+
+.film .badge-views { display:none !important; }
+.film .badge-series { position:absolute; top:6px; left:6px; background:rgba(0,0,0,.55); backdrop-filter:blur(6px); color:#fff; font-size:9px; padding:3px 8px; border-radius:10px; font-weight:600; z-index:2; }
+.film .btn-bookmark-top { position:absolute; top:6px; right:6px; width:28px; height:28px; border-radius:50%; background:rgba(0,0,0,.45); backdrop-filter:blur(6px); border:0; color:#fff; font-size:12px; display:grid; place-items:center; cursor:pointer; z-index:2; }
+.film .meta-below { font-size:10px; color:#8a8a93; margin:4px 2px 6px; display:flex; gap:4px; align-items:center; }
+.film .meta-below .dot { width:2px; height:2px; background:#555; border-radius:50%; display:inline-block; }
+.profil-info { display:grid; grid-template-columns:1fr; gap:10px; margin:16px 0 0; }
+.profil-info-card { background:#1e1e21; border:1px solid #2a2a30; border-radius:10px; padding:12px 14px; display:flex; justify-content:space-between; align-items:center; }
+.profil-info-card .left { display:flex; gap:8px; align-items:center; }
+.profil-info-card .label { font-size:11px; color:#8a8a93; }
+.profil-info-card .value { font-size:13px; font-weight:600; color:#f5f5f5; }
+.profil-avatar { width:52px !important; height:52px !important; font-size:18px !important; background:linear-gradient(135deg,#7c3aed,#a855f7) !important; color:white !important; }
+.vip-packages-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.vip-packages-grid .vip-card { margin:0; }
+.vip-packages-grid .vip-card.centered { grid-column:1 / span 2; max-width:52%; margin:0 auto; width:100%; }
+
 </style>
 </head>
 <body>
@@ -130,12 +146,12 @@ label { display:block; font-size:13px; color:#aaa; margin:12px 0 6px; }
   </section>
 
   <section id="vipScreen" hidden class="screen">
-    <h2 style="margin-top:0;">💎 Beli VIP</h2>
-    <p style="color:#aaa; font-size:13px; line-height:1.6;">Pilih paket VIP untuk akses penuh koleksi Dramaku TV. Harga final, masa aktif sesuai paket.</p>
+    <h2 style="margin-top:0;">💎 Langganan VIP Dramaku TV</h2>
+    <p style="color:#aaa; font-size:13px; line-height:1.6;">Nonton sepuasnya tanpa iklan! Pilih paket di bawah, bayar QRIS, langsung aktif!</p>
     <div id="daftarPaketVIP"></div>
     <h3 style="margin:28px 0 14px;">Keuntungan Member VIP</h3>
     <div id="benefitVIP"></div>
-    <div class="notice">Pembayaran otomatis QRIS sedang disiapkan. Saat ini pembayaran akan diarahkan ke instruksi manual dan konfirmasi admin.</div>
+    <div class="notice" style="background:rgba(255,193,7,0.12); border:1px solid rgba(255,193,7,0.25); color:#ffc107; padding:12px; border-radius:8px; font-size:12px;">✅ Pembayaran otomatis QRIS aktif! Bayar via QRIS, VIP langsung aktif otomatis tanpa perlu konfirmasi admin!</div>
   </section>
 
   <section id="profileScreen" hidden class="screen">
@@ -151,10 +167,8 @@ label { display:block; font-size:13px; color:#aaa; margin:12px 0 6px; }
       </div>
       <div id="noticeTelegram" class="notice" hidden>⚠️ Identitas Telegram belum tersedia. Buka aplikasi melalui Telegram Mini App untuk melihat profil lengkap.</div>
       <div class="profil-info">
-        <div class="profil-info-item"><span>📅</span><div><small>Bergabung Sejak</small><strong id="profilBergabung">—</strong></div></div>
-        <div class="profil-info-item"><span>👑</span><div><small>Status Keanggotaan</small><strong id="profilStatusVip">Gratis</strong><small id="profilVipSampai">Belum berlangganan VIP</small></div></div>
-        <div class="profil-info-item"><span>🎬</span><div><small>ID Telegram</small><strong id="profilIdTelegram">—</strong></div></div>
-        <div class="profil-info-item"><span>❤️</span><div><small>Drama Favorit</small><strong id="profilJumlahFav">0 drama</strong></div></div>
+        <div class="profil-info-card"><div class="left"><span>👑</span><div><div class="label">Status VIP</div><div class="value"><span id="profilStatusVip">Gratis</span> • <small id="profilVipSampai">Belum berlangganan VIP</small></div></div></div><div class="value" style="font-size:11px; color:#8a8a93;">Bergabung <span id="profilBergabung">—</span></div></div>
+        <div class="profil-info-card"><div class="left"><span>❤️</span><div><div class="label">Drama Favorit</div><div class="value" id="profilJumlahFav">0 drama</div></div></div><div class="value" style="font-size:11px; color:#8a8a93;">ID: <span id="profilIdTelegram">—</span></div></div>
       </div>
       <div class="profil-favorit">
         <div class="profil-favorit-header"><h3>📚 Drama Tersimpan</h3><span id="jumlahFavorit">0 drama</span></div>
@@ -407,16 +421,23 @@ function tampilkan() {
       const favAktif = isFavorit(f.id) ? " aktif" : "";
       const favText = isFavorit(f.id) ? "★ Favorit" : "♡ Simpan";
       const views = f.view_count ?? f.views ?? 0;
+      const favIcon = isFavorit(f.id) ? "❤️" : "🔖";
+      const viewsK = views >= 1000 ? (views/1000).toFixed(1)+'k' : String(views);
+      const rating = '4.8';
+      const duration = '2 jam';
       el.innerHTML = `
-        <div class="badge-views">👁️ ${views}</div>
-        <img loading="lazy" src="${f.poster||f.poster_url||'https://placehold.co/300x450/252525/ffffff?text=Poster'}" alt="${(f.judul||'').replace(/"/g,'')}" onerror="this.src='https://placehold.co/300x450/252525/ffffff?text=Poster'">
+        <div style="position:relative;">
+          <div class="badge-series">Series</div>
+          <button class="btn-bookmark-top" data-bookmark="${f.id}">${favIcon}</button>
+          <img loading="lazy" src="${f.poster||f.poster_url||'https://placehold.co/300x450/252525/ffffff?text=Poster'}" alt="${(f.judul||'').replace(/"/g,'')}" onerror="this.src='https://placehold.co/300x450/252525/ffffff?text=Poster'">
+        </div>
         <h3>${f.judul||'Tanpa judul'}</h3>
-        <button class="btn-favorit${favAktif}" data-fav="${f.id}">${favText}</button>
+        <div class="meta-below"><span>⭐ ${rating}</span><span class="dot"></span><span>${viewsK}</span><span class="dot"></span><span>${duration}</span></div>
       `;
       el.querySelector('img').addEventListener('click', ()=> bukaDetail(f.id));
       el.querySelector('h3').addEventListener('click', ()=> bukaDetail(f.id));
-      const btnFav = el.querySelector('[data-fav]');
-      btnFav.addEventListener('click', (e)=>{ e.stopPropagation(); toggleFavoritLokal(f.id); });
+      const btnBookmark = el.querySelector('[data-bookmark]');
+      if(btnBookmark) btnBookmark.addEventListener('click', (e)=>{ e.stopPropagation(); toggleFavoritLokal(f.id); });
       daftar.appendChild(el);
     });
   }
@@ -1042,83 +1063,33 @@ async function buatPembayaranUji() {
 </script>
 
 <script>
-// OVERRIDE FINAL - Poster small bookmark + meta below + VIP grid + neat profile
 document.addEventListener('DOMContentLoaded', function() {
-  // Patch film rendering after original load
-  const originalRender = window.renderFilmCards || window.tampilkanDrama || null;
-  
-  // New function to create neat film card
-  window.createNeatFilmCard = function(drama) {
-    const div = document.createElement('div');
-    div.className = 'film';
-    const poster = drama.poster_url || drama.poster || '';
-    const judul = drama.judul || 'Drama';
-    const views = drama.view_count ? `${(drama.view_count/1000).toFixed(1)}k` : '1.2k';
-    const rating = '4.8';
-    const duration = '2 jam';
-    
-    div.innerHTML = `
-      <div style="position:relative;">
-        <img src="${poster}" alt="${judul}" loading="lazy">
-        <div class="badge-series">Series</div>
-        <button class="btn-bookmark-top" onclick="event.stopPropagation(); toggleFavoritLokal('${drama.id}')">🔖</button>
-      </div>
-      <h3>${judul}</h3>
-      <div class="meta-below"><span>⭐ ${rating}</span><span class="dot"></span><span>${views}</span><span class="dot"></span><span>${duration}</span></div>
-      <a class="btn-tonton" onclick="bukaDetail('${drama.id}')">Tonton Sekarang</a>
-    `;
-    div.onclick = () => bukaDetail(drama.id);
-    return div;
-  };
-  
-  // Override VIP render to grouped grid
-  const originalRenderVIP = window.renderVIP;
-  if(originalRenderVIP) {
+  const origRenderVIP = window.renderVIP;
+  if(origRenderVIP) {
     window.renderVIP = function() {
-      originalRenderVIP();
+      origRenderVIP();
       setTimeout(() => {
-        const container = document.getElementById('daftarPaketVIP') || document.querySelector('.vip-packages') || document.getElementById('vipList');
+        const container = document.getElementById('daftarPaketVIP');
         if(container) {
-          // Find all vip cards and group them
+          container.classList.add('vip-packages-grid');
           const cards = container.querySelectorAll('.vip-card');
-          if(cards.length >= 5) {
-            container.classList.add('vip-packages-grid');
-            // Make last card centered
-            if(cards.length === 5) {
-              cards[4].classList.add('centered');
+          cards.forEach(card => {
+            const text = card.textContent;
+            if(text.includes('1 Hari') && text.includes('1.000')) {
+              card.style.display = 'none';
             }
-            // Hide 1 Hari test package if exists
-            cards.forEach(card => {
-              if(card.textContent.includes('1 Hari') && card.textContent.includes('1.000')) {
-                card.style.display = 'none';
-              }
-            });
+          });
+          // Center last visible card if odd count
+          const visibleCards = Array.from(cards).filter(c => c.style.display !== 'none');
+          if(visibleCards.length % 2 === 1 && visibleCards.length > 0) {
+            visibleCards[visibleCards.length-1].classList.add('centered');
           }
         }
-        // Update title and description
-        const titleEl = document.querySelector('#vipScreen h2');
-        if(titleEl && titleEl.textContent.includes('Beli VIP')) {
-          titleEl.textContent = '💎 Langganan VIP Dramaku TV';
-        }
-        const descEl = document.querySelector('#vipScreen p');
-        if(descEl && descEl.textContent.includes('Pilih paket VIP untuk akses penuh koleksi')) {
-          descEl.textContent = 'Nonton sepuasnya tanpa iklan! Pilih paket di bawah, bayar QRIS, langsung aktif!';
-        }
-        // Update yellow notice
-        const notices = document.querySelectorAll('[style*="background"]');
-        notices.forEach(n => {
-          if(n.textContent.includes('Pembayaran otomatis QRIS sedang disiapkan')) {
-            n.textContent = '✅ Pembayaran otomatis QRIS aktif! Bayar via QRIS, VIP langsung aktif otomatis tanpa perlu konfirmasi admin!';
-            n.style.background = 'rgba(255,193,7,0.15)';
-            n.style.border = '1px solid rgba(255,193,7,0.3)';
-            n.style.color = '#ffc107';
-          }
-        });
-      }, 100);
+      }, 50);
     };
   }
   
-  // Update benefits
+  // Update benefits immediately
   setTimeout(() => {
     const benefitEl = document.getElementById('benefitVIP');
     if(benefitEl) {
@@ -1131,8 +1102,56 @@ document.addEventListener('DOMContentLoaded', function() {
         <div class="vip-benefit"><span>💬</span><div><h4>Support 24 Jam</h4><p>Admin siap bantu kapan saja via live chat!</p></div></div>
       `;
     }
-  }, 200);
+  }, 100);
 });
+</script>
+
+
+<script>
+const ADMIN_TELEGRAM_ID = "5214858622";
+const ADMIN_TELEGRAM_USERNAME = "@Dramajpku_00";
+function initLiveChat() {
+  const btn = document.createElement('div');
+  btn.id = 'liveChatBtn';
+  btn.innerHTML = '💬';
+  btn.style.cssText = 'position:fixed; bottom:90px; right:16px; width:48px; height:48px; background:#e63946; border-radius:50%; display:grid; place-items:center; font-size:22px; cursor:pointer; z-index:60; box-shadow:0 4px 12px rgba(0,0,0,.4);';
+  document.body.appendChild(btn);
+  const modal = document.createElement('div');
+  modal.id = 'liveChatModal';
+  modal.style.cssText = 'display:none; position:fixed; bottom:150px; right:16px; width:320px; max-width:90vw; height:380px; background:#1e1e21; border:1px solid #333; border-radius:12px; z-index:70; flex-direction:column; overflow:hidden;';
+  modal.innerHTML = `<div style="padding:12px; background:#e63946; color:white; font-weight:700; display:flex; justify-content:space-between;"><span>💬 Live Chat Bantuan</span><span id="closeLiveChat" style="cursor:pointer;">✕</span></div><div id="chatMessages" style="flex:1; overflow-y:auto; padding:10px; display:flex; flex-direction:column; gap:8px;"></div><div style="padding:10px; border-top:1px solid #333; display:flex; gap:8px;"><input id="chatInput" placeholder="Ketik pesan..." style="flex:1; padding:8px; border-radius:6px; border:1px solid #444; background:#222; color:white; margin:0;"><button id="sendChat" style="background:#e63946; color:white; border:0; padding:8px 12px; border-radius:6px;">Kirim</button></div>`;
+  document.body.appendChild(modal);
+  document.getElementById('liveChatBtn').onclick = () => { modal.style.display = modal.style.display==='flex'?'none':'flex'; };
+  document.getElementById('closeLiveChat').onclick = () => { modal.style.display='none'; };
+  document.getElementById('sendChat').onclick = async () => {
+    const input = document.getElementById('chatInput');
+    const msg = input.value.trim();
+    if(!msg) return;
+    const div = document.getElementById('chatMessages');
+    const u = document.createElement('div');
+    u.style.cssText='align-self:flex-end; background:#e63946; color:white; padding:8px 10px; border-radius:12px 12px 0 12px; max-width:80%; font-size:13px;';
+    u.textContent=msg;
+    div.appendChild(u);
+    input.value='';
+    div.scrollTop=div.scrollHeight;
+    try {
+      const tg = window.Telegram?.WebApp?.initDataUnsafe?.user;
+      await fetch('https://wizpznrhbmbfpajpaexf.supabase.co/rest/v1/live_chat_messages', {
+        method:'POST',
+        headers:{'apikey':'sb_publishable_u2MHJvGkthIN0fULeAlDzQ_Zgnsg9Ap','Authorization':'Bearer sb_publishable_u2MHJvGkthIN0fULeAlDzQ_Zgnsg9Ap','Content-Type':'application/json','Prefer':'return=minimal'},
+        body: JSON.stringify({telegram_id: tg?.id?.toString()||'anonymous', username: tg?.username||'anon', message: msg, from_admin: false})
+      });
+    } catch(e){}
+    setTimeout(()=>{
+      const a=document.createElement('div');
+      a.style.cssText='align-self:flex-start; background:#2a2a30; color:#eee; padding:8px 10px; border-radius:12px 12px 12px 0; max-width:80%; font-size:13px;';
+      a.textContent='Terima kasih! Admin @Dramajpku_00 akan segera membalas.';
+      div.appendChild(a);
+      div.scrollTop=div.scrollHeight;
+    },1000);
+  };
+}
+document.addEventListener('DOMContentLoaded', initLiveChat);
 </script>
 
 </body>
