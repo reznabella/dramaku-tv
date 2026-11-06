@@ -110,7 +110,7 @@ label { display:block; font-size:13px; color:#aaa; margin:12px 0 6px; }
 .film .badge-views { display:none !important; }
 .film .badge-series { position:absolute; top:6px; left:6px; background:rgba(0,0,0,.55); backdrop-filter:blur(6px); color:#fff; font-size:9px; padding:3px 8px; border-radius:10px; font-weight:600; z-index:2; }
 .film .btn-bookmark-top { position:absolute; top:6px; right:6px; width:28px; height:28px; border-radius:50%; background:rgba(0,0,0,.45); backdrop-filter:blur(6px); border:0; color:#fff; font-size:12px; display:grid; place-items:center; cursor:pointer; z-index:2; }
-.film .meta-below { font-size:10px; color:#8a8a93; margin:4px 2px 6px; display:flex; gap:4px; align-items:center; }
+.film .meta-below { font-size:10px; color:#8a8a93; margin:4px 2px 6px; display:flex; gap:6px; align-items:center; }
 .film .meta-below .dot { width:2px; height:2px; background:#555; border-radius:50%; display:inline-block; }
 .profil-info { display:grid; grid-template-columns:1fr; gap:10px; margin:16px 0 0; }
 .profil-info-card { background:#1e1e21; border:1px solid #2a2a30; border-radius:10px; padding:12px 14px; display:flex; justify-content:space-between; align-items:center; }
@@ -121,6 +121,19 @@ label { display:block; font-size:13px; color:#aaa; margin:12px 0 6px; }
 .vip-packages-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 .vip-packages-grid .vip-card { margin:0; }
 .vip-packages-grid .vip-card.centered { grid-column:1 / span 2; max-width:52%; margin:0 auto; width:100%; }
+
+
+/* FIX PAKET MERAH KEBESARAN NUTUPI HARGA */
+.vip-card { background:#1c1c21; border:1px solid #2a2a30; border-radius:12px; padding:14px 12px; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+.vip-card-info h3 { margin:0 0 3px; font-size:14px; color:#fff; }
+.vip-card-info p { margin:0; color:#ff4d5a; font-weight:700; font-size:13px; }
+.vip-card button { background:#e63946; color:white; border:0; padding:6px 12px; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer; flex-shrink:0; white-space:nowrap; min-width:auto; }
+.vip-card button:hover { background:#d32f3a; }
+
+/* BOOKMARK OUTLINE ICON SEPERTI GAMBAR KEDUA */
+.btn-bookmark-top { background:rgba(0,0,0,.45) !important; backdrop-filter:blur(6px); border:0; width:26px !important; height:26px !important; border-radius:6px !important; display:grid; place-items:center; }
+.btn-bookmark-top svg { width:14px; height:16px; fill:none; stroke:white; stroke-width:1.8; stroke-linejoin:round; }
+.btn-bookmark-top.favorit svg { fill:white; stroke:white; }
 
 </style>
 </head>
@@ -263,7 +276,7 @@ label { display:block; font-size:13px; color:#aaa; margin:12px 0 6px; }
 
     <div style="display:grid; gap:8px; margin-top:14px;">
       <button
-        class="btn-primary"
+        class="btn-pilih"
         onclick="buatPembayaranUji()">
         Bayar Sekarang
       </button>
@@ -421,18 +434,31 @@ function tampilkan() {
       const favAktif = isFavorit(f.id) ? " aktif" : "";
       const favText = isFavorit(f.id) ? "★ Favorit" : "♡ Simpan";
       const views = f.view_count ?? f.views ?? 0;
-      const favIcon = isFavorit(f.id) ? "❤️" : "🔖";
+      const isFav = isFavorit(f.id);
       const viewsK = views >= 1000 ? (views/1000).toFixed(1)+'k' : String(views);
-      const rating = '4.8';
-      const duration = '2 jam';
+      // Rating & jam bervariasi per drama ID biar tidak sama semua
+
+      function getDuration(id) {
+        const hash = String(id).split('').reduce((a,c)=> a + c.charCodeAt(0)*2, 0);
+        const durations = ['1j 32m','1j 45m','2j 05m','2j 12m','1j 58m','2j 20m','1j 40m'];
+        return durations[hash % durations.length];
+      }
+      // Cuma view sama durasi, rating dihapus karena ribet
+      function getDuration(id) {
+        const hash = String(id).split('').reduce((a,c)=> a + c.charCodeAt(0)*2, 0);
+        const durations = ['1j 32m','1j 45m','2j 05m','2j 12m','1j 58m','2j 20m','1j 40m'];
+        return durations[hash % durations.length];
+      }
+      const duration = f.duration ? String(f.duration) : getDuration(f.id);
+      const bookmarkSVG = `<svg viewBox="0 0 24 24"><path d="M5 3h14a1 1 0 0 1 1 1v18l-8-5-8 5V4a1 1 0 0 1 1-1z"/></svg>`;
       el.innerHTML = `
         <div style="position:relative;">
           <div class="badge-series">Series</div>
-          <button class="btn-bookmark-top" data-bookmark="${f.id}">${favIcon}</button>
+          <button class="btn-bookmark-top ${isFav?'favorit':''}" data-bookmark="${f.id}">${bookmarkSVG}</button>
           <img loading="lazy" src="${f.poster||f.poster_url||'https://placehold.co/300x450/252525/ffffff?text=Poster'}" alt="${(f.judul||'').replace(/"/g,'')}" onerror="this.src='https://placehold.co/300x450/252525/ffffff?text=Poster'">
         </div>
         <h3>${f.judul||'Tanpa judul'}</h3>
-        <div class="meta-below"><span>⭐ ${rating}</span><span class="dot"></span><span>${viewsK}</span><span class="dot"></span><span>${duration}</span></div>
+        <div class="meta-below"><span>${viewsK}</span><span class="dot"></span><span>${duration}</span></div>
       `;
       el.querySelector('img').addEventListener('click', ()=> bukaDetail(f.id));
       el.querySelector('h3').addEventListener('click', ()=> bukaDetail(f.id));
@@ -494,6 +520,8 @@ async function ambilDramaSupabase() {
       link_tonton: d.link_tonton,
       created_at: d.created_at,
       view_count: d.view_count ?? d.views ?? 0,
+      rating: d.rating || d.bintang || null,
+      duration: d.duration || d.durasi || null,
       views: d.view_count ?? d.views ?? 0
     }));
     applyFilter();
@@ -613,7 +641,7 @@ function renderVIP() {
       </div>
 
       <button
-        class="btn-primary"
+        class="btn-pilih"
         style="padding:8px 14px; font-size:13px;"
         onclick="pilihPaket('${p.label}','${p.harga}',${p.hari})">
         Pilih Paket
@@ -629,16 +657,16 @@ function renderVIP() {
     <div class="vip-benefit">
       <span>🎥</span>
       <div>
-        <h4>Kualitas Video HD</h4>
-        <p>Nikmati tayangan drama dengan kualitas gambar HD.</p>
+        <h4>Nonton Langsung di Telegram</h4>
+        <p>Tanpa buka aplikasi lain, langsung play di Telegram!</p>
       </div>
     </div>
 
     <div class="vip-benefit">
       <span>💾</span>
       <div>
-        <h4>Bisa Disimpan</h4>
-        <p>Video dapat disimpan untuk ditonton kembali melalui layanan penyimpanan TeraBox.</p>
+        <h4>Tanpa Iklan</h4>
+        <p>Nonton nyaman tanpa gangguan iklan!</p>
       </div>
     </div>
 
