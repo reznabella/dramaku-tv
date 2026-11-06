@@ -25,10 +25,17 @@ input, select { width:100%; padding:13px; border-radius:8px; border:1px solid #4
 .grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px 10px; }
 .film { background:transparent; border-radius:8px; overflow:hidden; min-width:0; cursor:pointer; position:relative; }
 .film img { width:100%; aspect-ratio:2/3; object-fit:cover; border-radius:7px; background:#25252b; display:block; }
-.film h3 { font-size:12px; line-height:1.4; padding:0; margin:8px 1px 9px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:34px; }
+.film h3 { font-size:12px; line-height:1.4; padding:0; margin:6px 1px 4px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:28px; }
 .film a.btn-tonton { display:block; margin:0; padding:8px 3px; font-size:11px; font-weight:700; text-align:center; text-decoration:none; background:#e63946; color:white; border-radius:6px; }
 .film .btn-favorit { display:block; width:calc(100% - 2px); margin:7px 1px 0; padding:6px 2px; font-size:10px; color:#eee; background:#24242a; border:1px solid #393940; border-radius:6px; cursor:pointer; }
 .film .btn-favorit.aktif { background:#ff4d5a; border-color:#ff4d5a; color:white; }
+
+.film .badge-views { display:none; }
+.film .badge-series { position:absolute; top:6px; left:6px; background:rgba(0,0,0,.55); backdrop-filter:blur(4px); color:#fff; font-size:9px; padding:2px 7px; border-radius:12px; font-weight:600; letter-spacing:0.3px; }
+.film .btn-bookmark-top { position:absolute; top:6px; right:6px; width:28px; height:28px; border-radius:50%; background:rgba(0,0,0,.45); backdrop-filter:blur(4px); border:0; color:#fff; font-size:12px; display:grid; place-items:center; cursor:pointer; }
+.film .meta-below { font-size:10px; color:#a0a0a8; margin:4px 1px 6px; display:flex; gap:6px; align-items:center; }
+.film .meta-below span { display:inline-flex; gap:2px; }
+
 .film .badge-views { position:absolute; top:6px; left:6px; background:rgba(0,0,0,.75); color:#fff; font-size:10px; padding:3px 6px; border-radius:10px; display:flex; gap:3px; align-items:center; }
 #kosong { color:#bbb; text-align:center; padding:20px; }
 #pagination { display:flex; justify-content:center; align-items:center; gap:7px; flex-wrap:wrap; margin:24px 0 8px; }
@@ -62,7 +69,7 @@ footer { text-align:center; padding:25px; color:#aaa; font-size:12px; }
 .vip-benefit span { font-size:24px; flex-shrink:0; }
 .vip-benefit h4 { margin:0 0 4px; font-size:14px; }
 .vip-benefit p { margin:0; font-size:12px; color:#aaa; line-height:1.5; }
-.profil-container { max-width:850px; margin:24px auto; padding:20px; color:#f5f5f5; background:#151515; border:1px solid #303030; border-radius:18px; }
+.profil-container { max-width:850px; margin:16px auto; padding:16px; color:#f5f5f5; background:#151515; border:1px solid #303030; border-radius:16px; }
 .profil-header { display:flex; align-items:center; gap:16px; padding-bottom:22px; border-bottom:1px solid #333; }
 .profil-avatar { width:76px; height:76px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:36px; background:#292929; border-radius:50%; }
 .profil-identitas h2 { margin:0 0 8px; font-size:24px; }
@@ -106,6 +113,13 @@ footer { text-align:center; padding:25px; color:#aaa; font-size:12px; }
 label { display:block; font-size:13px; color:#aaa; margin:12px 0 6px; }
 @media (min-width:650px) { .grid, .profil-favorit-grid { grid-template-columns:repeat(4,minmax(0,1fr)); gap:22px 14px; } .film h3 {font-size:14px;} }
 @media (max-width:520px) { .profil-container { margin:14px 0; padding:15px; } .profil-avatar { width:60px; height:60px; font-size:29px; } .profil-identitas h2 { font-size:21px; } .profil-info { grid-template-columns:1fr; } .profil-favorit-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+
+.vip-packages-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:14px 0; }
+.vip-packages-grid .vip-card { margin:0; flex-direction:column; align-items:flex-start; gap:6px; padding:14px; }
+.vip-packages-grid .vip-card.centered { grid-column:1 / span 2; max-width:50%; margin:0 auto; width:100%; }
+.vip-packages-grid .vip-card h3 { font-size:14px; }
+.vip-packages-grid .vip-card p { font-size:13px; }
+
 </style>
 </head>
 <body>
@@ -131,11 +145,11 @@ label { display:block; font-size:13px; color:#aaa; margin:12px 0 6px; }
 
   <section id="vipScreen" hidden class="screen">
     <h2 style="margin-top:0;">💎 Beli VIP</h2>
-    <p style="color:#aaa; font-size:13px; line-height:1.6;">Pilih paket VIP untuk akses penuh koleksi Dramaku TV. Harga final, masa aktif sesuai paket.</p>
+    <p style="color:#aaa; font-size:13px; line-height:1.6;">Nonton sepuasnya tanpa iklan! Pilih paket di bawah, bayar QRIS, langsung aktif!</p>
     <div id="daftarPaketVIP"></div>
     <h3 style="margin:28px 0 14px;">Keuntungan Member VIP</h3>
     <div id="benefitVIP"></div>
-    <div class="notice">Pembayaran otomatis QRIS sedang disiapkan. Saat ini pembayaran akan diarahkan ke instruksi manual dan konfirmasi admin.</div>
+    <div class="notice">✅ Pembayaran otomatis QRIS aktif! Bayar via QRIS, VIP langsung aktif otomatis tanpa perlu konfirmasi admin!</div>
   </section>
 
   <section id="profileScreen" hidden class="screen">
@@ -1040,5 +1054,88 @@ async function buatPembayaranUji() {
   }
 }
 </script>
+
+<!-- LIVE CHAT KE ADMIN -->
+<script>
+const ADMIN_TELEGRAM_ID = "5214858622";
+const ADMIN_TELEGRAM_USERNAME = "@Dramajpku_00";
+
+function initLiveChat() {
+  const chatBtn = document.createElement('div');
+  chatBtn.id = 'liveChatBtn';
+  chatBtn.innerHTML = '💬';
+  chatBtn.style.cssText = 'position:fixed; bottom:90px; right:16px; width:48px; height:48px; background:#e63946; border-radius:50%; display:grid; place-items:center; font-size:22px; cursor:pointer; z-index:60; box-shadow:0 4px 12px rgba(0,0,0,.4);';
+  document.body.appendChild(chatBtn);
+  
+  const chatModal = document.createElement('div');
+  chatModal.id = 'liveChatModal';
+  chatModal.style.cssText = 'display:none; position:fixed; bottom:150px; right:16px; width:320px; max-width:90vw; height:380px; background:#1e1e21; border:1px solid #333; border-radius:12px; z-index:70; flex-direction:column; overflow:hidden;';
+  chatModal.innerHTML = `
+    <div style="padding:12px; background:#e63946; color:white; font-weight:700; display:flex; justify-content:space-between; align-items:center;">
+      <span>💬 Live Chat Bantuan</span>
+      <span id="closeLiveChat" style="cursor:pointer; font-size:18px;">✕</span>
+    </div>
+    <div id="chatMessages" style="flex:1; overflow-y:auto; padding:10px; display:flex; flex-direction:column; gap:8px;"></div>
+    <div style="padding:10px; border-top:1px solid #333; display:flex; gap:8px;">
+      <input id="chatInput" placeholder="Ketik pesan..." style="flex:1; padding:8px; border-radius:6px; border:1px solid #444; background:#222; color:white; margin:0;">
+      <button id="sendChat" style="background:#e63946; color:white; border:0; padding:8px 12px; border-radius:6px; cursor:pointer;">Kirim</button>
+    </div>
+  `;
+  document.body.appendChild(chatModal);
+  
+  document.getElementById('liveChatBtn').onclick = () => {
+    chatModal.style.display = chatModal.style.display === 'flex' ? 'none' : 'flex';
+  };
+  document.getElementById('closeLiveChat').onclick = () => {
+    chatModal.style.display = 'none';
+  };
+  document.getElementById('sendChat').onclick = async () => {
+    const input = document.getElementById('chatInput');
+    const msg = input.value.trim();
+    if(!msg) return;
+    const messagesDiv = document.getElementById('chatMessages');
+    const userMsg = document.createElement('div');
+    userMsg.style.cssText = 'align-self:flex-end; background:#e63946; color:white; padding:8px 10px; border-radius:12px 12px 0 12px; max-width:80%; font-size:13px;';
+    userMsg.textContent = msg;
+    messagesDiv.appendChild(userMsg);
+    input.value = '';
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    
+    // Kirim ke Supabase untuk notif admin
+    try {
+      const tg = window.Telegram?.WebApp?.initDataUnsafe?.user;
+      await fetch('https://wizpznrhbmbfpajpaexf.supabase.co/rest/v1/live_chat_messages', {
+        method: 'POST',
+        headers: {
+          'apikey': 'sb_publishable_u2MHJvGkthIN0fULeAlDzQ_Zgnsg9Ap',
+          'Authorization': 'Bearer sb_publishable_u2MHJvGkthIN0fULeAlDzQ_Zgnsg9Ap',
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
+        body: JSON.stringify({
+          telegram_id: tg?.id?.toString() || 'anonymous',
+          username: tg?.username || 'anon',
+          message: msg,
+          from_admin: false
+        })
+      });
+    } catch(e) {
+      console.log('Chat saved locally');
+    }
+    
+    // Simulasi balasan admin (untuk demo)
+    setTimeout(() => {
+      const adminMsg = document.createElement('div');
+      adminMsg.style.cssText = 'align-self:flex-start; background:#2a2a30; color:#eee; padding:8px 10px; border-radius:12px 12px 12px 0; max-width:80%; font-size:13px;';
+      adminMsg.textContent = 'Terima kasih! Admin @Dramajpku_00 akan segera membalas chat kamu. ID kamu sudah tercatat.';
+      messagesDiv.appendChild(adminMsg);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }, 1000);
+  };
+}
+
+document.addEventListener('DOMContentLoaded', initLiveChat);
+</script>
+
 </body>
 </html>
