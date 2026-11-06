@@ -282,7 +282,7 @@ label { display:block; font-size:13px; color:#aaa; margin:12px 0 6px; }
 
     <div style="display:grid; gap:8px; margin-top:14px;">
       <button
-        class="btn-pilih"
+        class="btn-primary"
         onclick="buatPembayaranUji()">
         Bayar Sekarang
       </button>
@@ -1018,7 +1018,7 @@ klienPengguna.auth.onAuthStateChange(()=>setTimeout(()=>{if(!document.getElement
 
 async function buatPembayaranUji() {
   const tombol = document.querySelector(
-    '#modalPembayaran button.btn-primary'
+    '#modalPembayaran button.btn-primary, #modalPembayaran button[onclick="buatPembayaranUji()"]'
   );
 
   // Gunakan Supabase anon/public key, BUKAN service_role key.
